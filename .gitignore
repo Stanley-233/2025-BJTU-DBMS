@@ -77,7 +77,6 @@ CMakeLists.txt.user*
 cmake-build-debug
 server/backend/.idea
 *.pptx
-doc/
 server/backend/game.db
 *.pdf
 build
