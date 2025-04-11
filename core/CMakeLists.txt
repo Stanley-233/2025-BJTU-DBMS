@@ -20,7 +20,6 @@ target_include_directories(
         data4sql
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include/.
-
 )
 
 target_compile_features(

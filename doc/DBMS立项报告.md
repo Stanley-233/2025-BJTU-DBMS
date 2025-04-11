@@ -98,9 +98,7 @@ Qt 6 相比于 Qt 5 有如下优点：
 
 ### 3.4 软件架构
 
-![pic](https://github.com/YXHXianYu/2023-BJTU-DBMS-Project/raw/main/document/pictures/ProjectConstruction.png)
-
-
+![img](https://raw.githubusercontent.com/Stanley-233/2025-BJTU-DBMS/refs/heads/main/doc/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84.png?token=GHSAT0AAAAAADAPT4TUGOZJPTVSF2EGWNZKZ6ZLRKA)
 
 ## 4. 贡献表
 
@@ -108,5 +106,5 @@ Qt 6 相比于 Qt 5 有如下优点：
 
 - 马展飞：软件技术方案、软件架构(40%)
 
-- 金一帆：开题答辩PPT、汇报(20%)
+- 李良超：开题答辩PPT、汇报(20%)
 
