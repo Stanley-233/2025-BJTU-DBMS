@@ -3,6 +3,9 @@
 //
 
 #include "Parser.h"
+#include "DataTypes.h"
+
+#include <map>
 
 std::string Parser::parse(const std::vector<std::string> &input) {
     std::string output;
@@ -31,25 +34,52 @@ std::string Parser::parse(const std::vector<std::string> &input) {
 }
 
 std::string Parser::createDatabase(const std::vector<std::string> &input) {
+    auto databaseName = input[2];
     return WIP;
 }
 
 std::string Parser::dropDatabase(const std::vector<std::string> &input) {
+    auto databaseName = input[2];
     return WIP;
 }
 
 std::string Parser::useDatabase(const std::vector<std::string> &input) {
+    auto databaseName = input[2];
     return WIP;
 }
 
 std::string Parser::createTable(const std::vector<std::string> &input) {
-    return WIP;
+    if (input.size() % 2 != 1 || input.size() < 5) return "ERROR: Wrong Syntax.";
+    std::string output = WIP;
+    auto tableName = input[2];
+    std::map<std::string, std::string> colTypes;
+    std::vector<std::string> colNames;
+    for (int i = 3; i < input.size(); ++i) {
+        auto colName = input[i];
+        auto colType = input[i + 1];
+        if (colType != "INTEGER" && colType != "INT" && colType != "TEXT" && colType != "DECIMAL") {
+            return "ERROR: Wrong Datatype.";
+        }
+        colNames.emplace_back(colName);
+        colTypes.insert(colName, colType);
+    }
+    return output;
 }
 
 std::string Parser::dropTable(const std::vector<std::string> &input) {
+    auto tableName = input[2];
     return WIP;
 }
 
 std::string Parser::alterTable(const std::vector<std::string> &input) {
+    auto tableName = input[2];
+    auto command = input[3];
+    if (command == "ADD") {
+
+    } else if (command == "DROP") {
+
+    } else if (command == "MODIFY") {
+
+    }
     return WIP;
 }
