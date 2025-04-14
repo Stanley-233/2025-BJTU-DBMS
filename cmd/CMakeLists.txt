@@ -7,27 +7,27 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 
 # 将src文件夹下所有文件添加至SOURCE_src
-aux_source_directory(./src/SOURCE_SRC)
-aux_source_directory(./../core/src/SOURCE_CORE)
+aux_source_directory(./src/ SOURCE_SRC)
+#aux_source_directory(./../core/src/ SOURCE_CORE)
 
 add_executable(
         data4sql
         main.cpp
         # cmd
         ${SOURCE_SRC}
-        # core
-        ${SOURCE_CORE}
+#        # core
+#        ${SOURCE_CORE}
 )
 
 target_include_directories(
-        colasql
+        data4sql
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include/.
-        ${PROJECT_SOURCE_DIR}/../core/include/.
+#        ${PROJECT_SOURCE_DIR}/../core/include/.
 )
 
 target_compile_features(
-        colasql
+        data4sql
         PRIVATE
         cxx_std_17
 )

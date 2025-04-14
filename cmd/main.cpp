@@ -1,7 +1,7 @@
-#include <iostream>
-
+#include "include/CommandLine.h"
 using namespace std;
 
 int main() {
-    cout << "Hello World!" << endl;
+    auto app = CommandLine::getInstance();
+    app.start();
 }
