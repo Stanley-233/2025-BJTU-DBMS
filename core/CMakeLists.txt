@@ -14,6 +14,10 @@ add_executable(
         main.cpp
         # core
         ${SOURCE_SRC}
+        src/table.cpp
+        include/table.h
+        src/DataTypes.cpp
+        include/DataTypes.h
 )
 
 target_include_directories(
