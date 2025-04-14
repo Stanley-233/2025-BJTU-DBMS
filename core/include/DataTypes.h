@@ -24,6 +24,7 @@ public:
     [[nodiscard]] int getValue() const {return value;}
     void get_value_from_string(const string&) override;
     explicit operator string() const override;
+    explicit INTEGER(const string & v);
 };
 
 class TEXT final : public BaseType {
@@ -44,9 +45,10 @@ public:
     bool is_invalid();
     explicit operator string() const override;
     void get_value_from_string(const string&) override;
+    explicit DECIMAL(const string & v);
 };
 
-enum class Types : unsigned int {
+enum class Types : int {
     INTEGER,
     TEXT,
     DECIMAL,
@@ -56,7 +58,8 @@ class TypeHandler {
     Types type;
 public:
     explicit TypeHandler(const Types t) : type(t) {}
-    BaseType * create_unit();
+    [[nodiscard]] int get_type_id() const;
+    BaseType * create_unit(const string&) const;
 };
 
 #endif //DATATYPE_H

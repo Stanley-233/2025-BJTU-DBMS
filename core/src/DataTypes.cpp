@@ -17,6 +17,10 @@ INTEGER::operator string() const {
     return result;
 }
 
+INTEGER::INTEGER(const string &v) {
+    get_value_from_string(v);
+}
+
 TEXT::operator string() const {
     return text;
 }
@@ -43,4 +47,23 @@ void DECIMAL::get_value_from_string(const string & str) {
     const auto i = str.find_first_of('.');
     integer = str.substr(0, i);
     decimal = str.substr(i + 1);
+}
+
+DECIMAL::DECIMAL(const string &v) {
+    get_value_from_string(v);
+}
+
+int TypeHandler::get_type_id() const {
+    return static_cast<int>(type);
+}
+
+BaseType * TypeHandler::create_unit(const string & value) const{
+    switch (type) {
+        case Types::TEXT:
+            return new TEXT(value);
+        case Types::INTEGER:
+            return new INTEGER(value);
+        case Types::DECIMAL:
+            return new DECIMAL(value);
+    }
 }

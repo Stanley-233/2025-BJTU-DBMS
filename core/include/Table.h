@@ -10,19 +10,22 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <filesystem>
 
 using namespace std;
 using namespace csv;
 
 
 class Table {
-    CSVReader table_reader;
+    CSVReader *table_reader;
     ofstream table_stream;
+    unordered_map<string, TypeHandler> type_getter;
+    vector<string> table_headers;
 public:
-    Table();
+    explicit Table(const string &file_name);
     ~Table();
-    static Table create_table(string, string, unordered_map<string, BaseType*>);
-    void write_row();
+    static Table create_table(string, const string &, unordered_map<string, TypeHandler>, const vector<string> &);
+    void insert_row(const vector<string> &row);
 };
 
 
