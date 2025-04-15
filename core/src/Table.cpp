@@ -5,13 +5,13 @@
 #include "Table.h"
 
 Table::Table(const string &file_name) {
-    CSVFormat table_format;
+    csv::CSVFormat table_format;
     table_format.delimiter('\t')
                 .quote(false)
                 .no_header();
     table_stream.open(file_name);
-    CSVReader header_reader(file_name + ".header", table_format);
-    CSVRow header, type;
+    csv::CSVReader header_reader(file_name + ".header", table_format);
+    csv::CSVRow header, type;
     header_reader.read_row(header);
     header_reader.read_row(type);
     for (int i = 0; i < header.size(); i++) {
@@ -20,7 +20,7 @@ Table::Table(const string &file_name) {
         table_headers.emplace_back(column_name);
     }
     table_format.column_names(table_headers);
-    table_reader = new CSVReader(file_name, table_format);
+    table_reader = new csv::CSVReader(file_name, table_format);
 }
 
 Table::~Table() {
@@ -36,8 +36,8 @@ Table Table::create_table(  string path,
         path += '/';
     path += table_name + ".csv";
     ofstream temp_header_writer(path + ".header", ios::trunc);
-    auto header_creator = make_csv_writer(temp_header_writer);
-    set_decimal_places(6);
+    auto header_creator = csv::make_csv_writer(temp_header_writer);
+    csv::set_decimal_places(6);
     header_creator << t_headers;
     vector<string> t_types;
     for (const auto & s : t_headers)
@@ -48,6 +48,6 @@ Table Table::create_table(  string path,
 }
 
 void Table::insert_row(const vector<string> &row) {
-    auto table_writer = make_csv_writer(table_stream);
+    auto table_writer = csv::make_csv_writer(table_stream);
     table_writer << row;
 }

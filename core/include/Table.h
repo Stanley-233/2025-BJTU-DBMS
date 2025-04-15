@@ -13,11 +13,9 @@
 #include <filesystem>
 
 using namespace std;
-using namespace csv;
-
 
 class Table {
-    CSVReader *table_reader;
+    csv::CSVReader *table_reader;
     ofstream table_stream;
     unordered_map<string, TypeHandler> type_getter;
     vector<string> table_headers;

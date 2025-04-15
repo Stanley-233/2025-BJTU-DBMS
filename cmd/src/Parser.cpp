@@ -34,18 +34,18 @@ std::string Parser::parse(const std::vector<std::string> &input) {
 }
 
 std::string Parser::createDatabase(const std::vector<std::string> &input) {
-    auto databaseName = input[2];
-    return WIP;
+    const auto& databaseName = input[2];
+    return _coreProcess.createDatabase(databaseName);
 }
 
 std::string Parser::dropDatabase(const std::vector<std::string> &input) {
-    auto databaseName = input[2];
-    return WIP;
+    const auto& databaseName = input[2];
+    return _coreProcess.dropDatabase(databaseName);
 }
 
 std::string Parser::useDatabase(const std::vector<std::string> &input) {
-    auto databaseName = input[2];
-    return WIP;
+    const auto& databaseName = input[2];
+    return _coreProcess.useDatabase(databaseName);
 }
 
 std::string Parser::createTable(const std::vector<std::string> &input) {
@@ -62,24 +62,29 @@ std::string Parser::createTable(const std::vector<std::string> &input) {
         }
         colNames.emplace_back(colName);
         colTypes.insert(colName, colType);
+        output = _coreProcess.createTable(tableName, colNames, colTypes);
     }
     return output;
 }
 
 std::string Parser::dropTable(const std::vector<std::string> &input) {
-    auto tableName = input[2];
-    return WIP;
+    const auto& tableName = input[2];
+    return _coreProcess.dropTable(tableName);
 }
 
 std::string Parser::alterTable(const std::vector<std::string> &input) {
-    auto tableName = input[2];
-    auto command = input[3];
+    std::string output;
+    const auto& tableName = input[2];
+    const auto& command = input[3];
     if (command == "ADD") {
-
+        if (input.size() != 5) return "ERROR: Wrong Syntax.";
+        output = _coreProcess.alterTableAdd(tableName, input[4], input[5]);
     } else if (command == "DROP") {
-
+        if (input.size() != 4) return "ERROR: Wrong Syntax.";
+        output = _coreProcess.alterTableDrop(tableName, input[4]);
     } else if (command == "MODIFY") {
-
+        // TODO: MODIFY SYNTAX DESIGN
+        output = "WIP";
     }
-    return WIP;
+    return output;
 }

@@ -5,6 +5,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <CoreProcess.h>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,7 @@ public:
     Parser() = default;
     std::string parse(const std::vector<std::string>& input);
 private:
+    CoreProcess _coreProcess = CoreProcess::getInstance();
     // DATABASE
     std::string createDatabase(const std::vector<std::string>& input);
     std::string dropDatabase(const std::vector<std::string>& input);
