@@ -21,19 +21,15 @@ INTEGER::INTEGER(const string &v) {
     get_value_from_string(v);
 }
 
-TEXT::TEXT(string v) {
-    text = std::move(v);
-}
-
-TEXT::operator string() const {
+MYTEXT::operator string() const {
     return text;
 }
 
-void TEXT::get_value_from_string(const string & str) {
+void MYTEXT::get_value_from_string(const string & str) {
     text = str;
 }
 
-bool DECIMAL::is_invalid() {
+bool POINTING::is_invalid() {
     if (integer.size() > length_of_integer || decimal.size() > length_of_decimal)
         return false;
     if (all_of(integer.begin(), integer.end(), ::isdigit))
@@ -43,17 +39,17 @@ bool DECIMAL::is_invalid() {
     return true;
 }
 
-DECIMAL::operator string() const {
+POINTING::operator string() const {
     return integer + "." + decimal;
 }
 
-void DECIMAL::get_value_from_string(const string & str) {
+void POINTING::get_value_from_string(const string & str) {
     const auto i = str.find_first_of('.');
     integer = str.substr(0, i);
     decimal = str.substr(i + 1);
 }
 
-DECIMAL::DECIMAL(const string &v) {
+POINTING::POINTING(const string &v) {
     get_value_from_string(v);
 }
 
@@ -63,11 +59,11 @@ int TypeHandler::get_type_id() const {
 
 BaseType * TypeHandler::create_unit(const string & value) const{
     switch (type) {
-        case Types::TEXT:
-            return new TEXT(value);
-        case Types::INTEGER:
+        case 0:
+            return new MYTEXT(value);
+        case 1:
             return new INTEGER(value);
-        case Types::DECIMAL:
-            return new DECIMAL(value);
+        case 2:
+            return new POINTING(value);
     }
 }

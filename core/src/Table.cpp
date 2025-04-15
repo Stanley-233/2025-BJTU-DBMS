@@ -16,7 +16,7 @@ Table::Table(const string &file_name) {
     header_reader.read_row(type);
     for (int i = 0; i < header.size(); i++) {
         auto column_name = header[i].get<string>();
-        type_getter.emplace(column_name, static_cast<Types>(header[i].get<int>()));
+        type_getter.emplace(column_name, header[i].get<int>());
         table_headers.emplace_back(column_name);
     }
     table_format.column_names(table_headers);

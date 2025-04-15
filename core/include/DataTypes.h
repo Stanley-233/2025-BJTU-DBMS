@@ -28,37 +28,35 @@ public:
     explicit INTEGER(const string & v);
 };
 
-class TEXT final : public BaseType {
-    string text;
+class MYTEXT final : public BaseType {
+    std::string text;
 public:
-    explicit TEXT(string v);
+    explicit MYTEXT(std::string v) : text(std::move(v)) {}
+    ~MYTEXT() override = default;
     explicit operator string() const override;
     void get_value_from_string(const string&) override;
 };
 
-class DECIMAL final : public BaseType {
+class POINTING final : public BaseType {
     string integer;
     int length_of_integer;
     string decimal;
     int length_of_decimal;
 public:
-    explicit DECIMAL(const int all, const int d) : length_of_integer(all-d), length_of_decimal(d) {}
+    explicit POINTING(const int all, const int d) : length_of_integer(all-d), length_of_decimal(d) {}
     bool is_invalid();
     explicit operator string() const override;
     void get_value_from_string(const string&) override;
-    explicit DECIMAL(const string & v);
-};
-
-enum class Types : int {
-    INTEGER,
-    TEXT,
-    DECIMAL,
+    explicit POINTING(const string & v);
 };
 
 class TypeHandler {
-    Types type;
+    // 0 - TEXT
+    // 1 - 整数
+    // 2 - 小数
+    int type;
 public:
-    explicit TypeHandler(const Types t) : type(t) {}
+    explicit TypeHandler(const int t) : type(t) {}
     [[nodiscard]] int get_type_id() const;
     BaseType * create_unit(const string&) const;
 };
