@@ -10,6 +10,7 @@ using namespace std;
 
 class BaseType {
 public:
+    BaseType() = default;
     virtual ~BaseType() = default;
     virtual void get_value_from_string(const string&) = 0;
     explicit virtual operator string() const = 0;
@@ -30,7 +31,7 @@ public:
 class TEXT final : public BaseType {
     string text;
 public:
-    explicit TEXT(string v) : text(std::move(v)) {}
+    explicit TEXT(string v);
     explicit operator string() const override;
     void get_value_from_string(const string&) override;
 };

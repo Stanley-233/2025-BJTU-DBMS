@@ -21,6 +21,10 @@ INTEGER::INTEGER(const string &v) {
     get_value_from_string(v);
 }
 
+TEXT::TEXT(string v) {
+    text = std::move(v);
+}
+
 TEXT::operator string() const {
     return text;
 }
