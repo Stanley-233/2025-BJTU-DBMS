@@ -8,5 +8,5 @@ int main() {
     std::unordered_map<std::string, TypeHandler> types = {    {"Author", TypeHandler(0)},
                                                     {"Name", TypeHandler(0)},
                                                     {"Email", TypeHandler(0)} };
-    Table * t = Table::create_table(path, table_name, types, header);
+    Table::create_table(path, table_name, types, header);
 }

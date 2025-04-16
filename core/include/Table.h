@@ -21,7 +21,7 @@ class Table {
 public:
     explicit Table(const std::string &file_name);
     ~Table();
-    static Table* create_table(std::string,
+    static void create_table(std::string,
         const std::string &,
         std::unordered_map<std::string, TypeHandler>,
         const std::vector<std::string> &);

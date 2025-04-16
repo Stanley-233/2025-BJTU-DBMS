@@ -30,7 +30,7 @@ Table::~Table() {
     delete table_reader;
 }
 
-Table* Table::create_table(  std::string path,
+void Table::create_table(  std::string path,
                             const std::string &table_name,
                             std::unordered_map<std::string, TypeHandler> h_types,
                             const std::vector<std::string> &t_headers    ) {
@@ -53,7 +53,6 @@ Table* Table::create_table(  std::string path,
     std::ofstream csv_header_writer(path+".csv", std::ios::trunc);
     auto csv_header_creator = csv::make_csv_writer(csv_header_writer);
     csv_header_creator << t_headers;
-    return new Table(path);
 }
 
 void Table::insert_row(const std::vector<std::string> &row) {
