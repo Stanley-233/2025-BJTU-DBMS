@@ -5,7 +5,7 @@
 #include "Parser.h"
 #include "DataTypes.h"
 
-#include <map>
+#include <unordered_map>
 
 std::string Parser::parse(const std::vector<std::string> &input) {
     std::string output;
@@ -51,17 +51,22 @@ std::string Parser::useDatabase(const std::vector<std::string> &input) {
 std::string Parser::createTable(const std::vector<std::string> &input) {
     if (input.size() % 2 != 1 || input.size() < 5) return "ERROR: Wrong Syntax.";
     std::string output = WIP;
-    auto tableName = input[2];
-    std::map<std::string, std::string> colTypes;
+    const auto& tableName = input[2];
+    std::unordered_map<std::string, TypeHandler> colTypes;
     std::vector<std::string> colNames;
     for (int i = 3; i < input.size(); ++i) {
-        auto colName = input[i];
-        auto colType = input[i + 1];
-        if (colType != "INTEGER" && colType != "INT" && colType != "TEXT" && colType != "DECIMAL") {
-            return "ERROR: Wrong Datatype.";
+        std::string colName = input[i];
+        std::string colType = input[i + 1];\
+        if (colType == "INTEGER" || colType == "INT") {
+            colTypes.emplace(colName, TypeHandler(1));
+        } else if (colType == "TEXT") {
+            colTypes.emplace(colName, TypeHandler(0));
+        } else if (colType == "DECIMAL") {
+            colTypes.emplace(colName, TypeHandler(2));
+        } else {
+            return "ERROR: Wrong Datatype. Supported types: INTEGER, INT, TEXT, DECIMAL.";
         }
         colNames.emplace_back(colName);
-        colTypes.insert(colName, colType);
         output = _coreProcess.createTable(tableName, colNames, colTypes);
     }
     return output;

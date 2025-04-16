@@ -10,7 +10,7 @@
 #include <vector>
 
 class Parser {
-    constexpr std::string WIP = "ERROR: Not Implemented.";
+    const std::string WIP = "ERROR: Not Implemented.";
 public:
     Parser() = default;
     std::string parse(const std::vector<std::string>& input);
