@@ -13,16 +13,19 @@
 #include <filesystem>
 
 using namespace std;
+using namespace csv;
+
 
 class Table {
-    csv::CSVReader *table_reader;
+    string file_name;
+    CSVReader *table_reader;
     ofstream table_stream;
     unordered_map<string, TypeHandler> type_getter;
     vector<string> table_headers;
 public:
     explicit Table(const string &file_name);
     ~Table();
-    static Table create_table(string, const string &, unordered_map<string, TypeHandler>, const vector<string> &);
+    static Table* create_table(string, const string &, unordered_map<string, TypeHandler>, const vector<string> &);
     void insert_row(const vector<string> &row);
 };
 

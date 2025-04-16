@@ -51,6 +51,8 @@ void POINTING::get_value_from_string(const string & str) {
 
 POINTING::POINTING(const string &v) {
     get_value_from_string(v);
+    length_of_integer = integer.size();
+    length_of_decimal = decimal.size();
 }
 
 int TypeHandler::get_type_id() const {

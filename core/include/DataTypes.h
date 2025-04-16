@@ -56,7 +56,7 @@ class TypeHandler {
     // 2 - 小数
     int type;
 public:
-    explicit TypeHandler(const int t) : type(t) {}
+    explicit TypeHandler(const int t = 0) : type(t) {}
     [[nodiscard]] int get_type_id() const;
     BaseType * create_unit(const string&) const;
 };

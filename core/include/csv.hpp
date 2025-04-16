@@ -6964,6 +6964,7 @@ namespace csv {
             auto mmap = mio::make_mmap_source(std::string(filename), 0, length, error);
 
             if (error) {
+                std::cout << error;
                 throw std::runtime_error("Cannot open file " + std::string(filename));
             }
 
