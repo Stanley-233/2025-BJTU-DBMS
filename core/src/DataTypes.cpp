@@ -6,26 +6,26 @@
 
 #include <algorithm>
 
-void INTEGER::get_value_from_string(const string & str) {
+void INTEGER::get_value_from_string(const std::string & str) {
     memcpy(&value, str.c_str(), sizeof(value));
 }
 
-INTEGER::operator string() const {
-    string result;
+INTEGER::operator std::string() const {
+    std::string result;
     memcpy(result.data(), &value, sizeof(value));
     result.resize(sizeof(value));
     return result;
 }
 
-INTEGER::INTEGER(const string &v) {
+INTEGER::INTEGER(const std::string &v) {
     get_value_from_string(v);
 }
 
-MYTEXT::operator string() const {
+MYTEXT::operator std::string() const {
     return text;
 }
 
-void MYTEXT::get_value_from_string(const string & str) {
+void MYTEXT::get_value_from_string(const std::string & str) {
     text = str;
 }
 
@@ -39,17 +39,17 @@ bool POINTING::is_invalid() {
     return true;
 }
 
-POINTING::operator string() const {
+POINTING::operator std::string() const {
     return integer + "." + decimal;
 }
 
-void POINTING::get_value_from_string(const string & str) {
+void POINTING::get_value_from_string(const std::string & str) {
     const auto i = str.find_first_of('.');
     integer = str.substr(0, i);
     decimal = str.substr(i + 1);
 }
 
-POINTING::POINTING(const string &v) {
+POINTING::POINTING(const std::string &v) {
     get_value_from_string(v);
     length_of_integer = integer.size();
     length_of_decimal = decimal.size();
@@ -59,7 +59,7 @@ int TypeHandler::get_type_id() const {
     return static_cast<int>(type);
 }
 
-BaseType * TypeHandler::create_unit(const string & value) const{
+BaseType * TypeHandler::create_unit(const std::string & value) const{
     switch (type) {
         case 0:
             return new MYTEXT(value);

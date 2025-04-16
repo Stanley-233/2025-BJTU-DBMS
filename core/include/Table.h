@@ -12,21 +12,20 @@
 #include <unordered_map>
 #include <filesystem>
 
-using namespace std;
-using namespace csv;
-
-
 class Table {
-    string file_name;
-    CSVReader *table_reader;
-    ofstream table_stream;
-    unordered_map<string, TypeHandler> type_getter;
-    vector<string> table_headers;
+    std::string file_name;
+    csv::CSVReader *table_reader;
+    std::ofstream table_stream;
+    std::unordered_map<std::string, TypeHandler> type_getter;
+    std::vector<std::string> table_headers;
 public:
-    explicit Table(const string &file_name);
+    explicit Table(const std::string &file_name);
     ~Table();
-    static Table* create_table(string, const string &, unordered_map<string, TypeHandler>, const vector<string> &);
-    void insert_row(const vector<string> &row);
+    static Table* create_table(std::string,
+        const std::string &,
+        std::unordered_map<std::string, TypeHandler>,
+        const std::vector<std::string> &);
+    void insert_row(const std::vector<std::string> &row);
 };
 
 

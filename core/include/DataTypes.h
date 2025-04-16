@@ -6,14 +6,13 @@
 #define DATATYPE_H
 #include <string>
 #include <utility>
-using namespace std;
 
 class BaseType {
 public:
     BaseType() = default;
     virtual ~BaseType() = default;
-    virtual void get_value_from_string(const string&) = 0;
-    explicit virtual operator string() const = 0;
+    virtual void get_value_from_string(const std::string&) = 0;
+    explicit virtual operator std::string() const = 0;
 };
 
 class INTEGER final : public BaseType{
@@ -23,9 +22,9 @@ public:
     explicit INTEGER(const int v) : value(v) {}
     explicit operator int() const {return value;}
     [[nodiscard]] int getValue() const {return value;}
-    void get_value_from_string(const string&) override;
-    explicit operator string() const override;
-    explicit INTEGER(const string & v);
+    void get_value_from_string(const std::string&) override;
+    explicit operator std::string() const override;
+    explicit INTEGER(const std::string & v);
 };
 
 class MYTEXT final : public BaseType {
@@ -33,21 +32,21 @@ class MYTEXT final : public BaseType {
 public:
     explicit MYTEXT(std::string v) : text(std::move(v)) {}
     ~MYTEXT() override = default;
-    explicit operator string() const override;
-    void get_value_from_string(const string&) override;
+    explicit operator std::string() const override;
+    void get_value_from_string(const std::string&) override;
 };
 
 class POINTING final : public BaseType {
-    string integer;
+    std::string integer;
     int length_of_integer;
-    string decimal;
+    std::string decimal;
     int length_of_decimal;
 public:
     explicit POINTING(const int all, const int d) : length_of_integer(all-d), length_of_decimal(d) {}
     bool is_invalid();
-    explicit operator string() const override;
-    void get_value_from_string(const string&) override;
-    explicit POINTING(const string & v);
+    explicit operator std::string() const override;
+    void get_value_from_string(const std::string&) override;
+    explicit POINTING(const std::string & v);
 };
 
 class TypeHandler {
@@ -58,7 +57,7 @@ class TypeHandler {
 public:
     explicit TypeHandler(const int t = 0) : type(t) {}
     [[nodiscard]] int get_type_id() const;
-    BaseType * create_unit(const string&) const;
+    BaseType * create_unit(const std::string&) const;
 };
 
 #endif //DATATYPE_H
