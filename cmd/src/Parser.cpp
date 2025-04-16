@@ -54,7 +54,7 @@ std::string Parser::createTable(const std::vector<std::string> &input) {
     const auto& tableName = input[2];
     std::unordered_map<std::string, TypeHandler> colTypes;
     std::vector<std::string> colNames;
-    for (int i = 3; i < input.size(); ++i) {
+    for (int i = 3; i < input.size(); i+=2) {
         std::string colName = input[i];
         std::string colType = input[i + 1];\
         if (colType == "INTEGER" || colType == "INT") {
@@ -67,8 +67,8 @@ std::string Parser::createTable(const std::vector<std::string> &input) {
             return "ERROR: Wrong Datatype. Supported types: INTEGER, INT, TEXT, DECIMAL.";
         }
         colNames.emplace_back(colName);
-        output = _coreProcess.createTable(tableName, colNames, colTypes);
     }
+    output = _coreProcess.createTable(tableName, colNames, colTypes);
     return output;
 }
 

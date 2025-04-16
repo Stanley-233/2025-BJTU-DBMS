@@ -29,9 +29,6 @@ void CommandLine::start() {
         if (status == -1) continue;
         if (status == 0) {
             // finish
-            for (int i = 0; i < result.size(); i++) {
-                std::cout << result[i] << std::endl;
-            }
             auto message = _parser.parse(result);
             std::cout << message << std::endl;
             result.clear();
