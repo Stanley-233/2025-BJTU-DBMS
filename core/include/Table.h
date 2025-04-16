@@ -26,6 +26,8 @@ public:
         std::unordered_map<std::string, TypeHandler>,
         const std::vector<std::string> &);
     void insert_row(const std::vector<std::string> &row);
+    void drop_table();
+    void alter_table_drop_column(const std::string &);
 };
 
 

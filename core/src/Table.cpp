@@ -27,7 +27,8 @@ Table::Table(const std::string &file_name) {
 }
 
 Table::~Table() {
-    delete table_reader;
+    if (!table_reader)
+        delete table_reader;
 }
 
 void Table::create_table(  std::string path,
@@ -59,3 +60,31 @@ void Table::insert_row(const std::vector<std::string> &row) {
     auto table_writer = csv::make_csv_writer(table_stream);
     table_writer << row;
 }
+
+void Table::drop_table(){
+    delete table_reader;
+    table_reader = nullptr;
+    std::filesystem::path table_path(this->file_name), temp_path = table_path;
+    std::filesystem::rename(table_path, temp_path.replace_extension(std::filesystem::path(".del")));
+    table_path.replace_extension(".header");
+    std::filesystem::rename(table_path, temp_path.replace_extension(std::filesystem::path(".hdl")));
+}
+
+void Table::alter_table_drop_column(const std::string & column_name) {
+    for (int i= 0; i < table_headers.size(); ++i)
+        if (table_headers[i] == column_name)
+            table_headers.erase(table_headers.begin() + i);
+    type_getter.erase(column_name);
+    std::filesystem::path table_path(this->file_name);
+    table_path.replace_extension(std::filesystem::path(".header"));
+    std::ofstream header_stream(table_path, std::ios::trunc);
+    auto header_writer = csv::make_csv_writer(header_stream);
+    header_writer << table_headers;
+    std::vector<int> column_types(type_getter.size());
+    for (auto && i : table_headers)
+        column_types.emplace_back(type_getter[i].get_type_id());
+    header_writer << column_types;
+    header_stream.close();
+}
+
+
