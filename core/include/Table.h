@@ -31,6 +31,7 @@ public:
     void alter_table_add_column(const std::string &, int);
     void alter_table_rename_column(const std::string &, const std::string &);
     void alter_table_modify(const std::string &, int);
+    void alter_table_rename_table(const std::string &);
 };
 
 

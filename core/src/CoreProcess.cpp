@@ -78,6 +78,7 @@ std::string CoreProcess::alterTableAdd(const std::string &table_name, const std:
     }
     Table t(path);
     int type = -1;
+    //这里的switch有bug
     switch (col_type) {
         case "TEXT":
             type = 0;
@@ -117,6 +118,7 @@ std::string CoreProcess::alterTableModify(const std::string &table_name, const s
     }
     Table t(path);
     int type = -1;
+    //这里也有
     switch (col_type) {
         case "TEXT":
             type = 0;

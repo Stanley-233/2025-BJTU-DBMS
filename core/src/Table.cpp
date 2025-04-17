@@ -139,3 +139,20 @@ void Table::alter_table_modify(const std::string &column_name, int type) {
     header_stream.close();
 }
 
+void Table::alter_table_rename_table(const std::string & new_name) {
+    delete table_reader;
+    std::filesystem::path table_path(this->file_name), new_path = table_path;
+    new_path.replace_filename(std::filesystem::path(new_name + ".csv"));
+    std::filesystem::rename(table_path, new_path);
+    table_path.assign(file_name);
+    table_path.replace_extension(std::filesystem::path(".header"));
+    new_path.replace_extension(std::filesystem::path(new_name + ".header"));
+    std::filesystem::rename(table_path, new_path);
+    file_name = new_path.replace_extension(std::filesystem::path(".csv")).string();
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(file_name, table_format);
+}
+
