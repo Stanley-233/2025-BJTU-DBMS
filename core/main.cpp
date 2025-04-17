@@ -6,9 +6,10 @@ int main() {
     std::string table_name = "test";;
     std::vector<std::string> header = {"Author", "Name", "Email"};
     std::unordered_map<std::string, TypeHandler> types = {    {"Author", TypeHandler(0)},
-                                                    {"Name", TypeHandler(0)},
+                                                    {"Name", TypeHandler(1)},
                                                     {"Email", TypeHandler(0)} };
     Table::create_table(path, table_name, types, header);
     Table t(path + "/" + table_name);
-    t.drop_table();
+    t.alter_table_drop_column("Name");
+    t.alter_table_add_column("Name", 0);
 }

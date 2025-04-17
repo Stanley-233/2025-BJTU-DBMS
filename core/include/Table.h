@@ -25,9 +25,10 @@ public:
         const std::string &,
         std::unordered_map<std::string, TypeHandler>,
         const std::vector<std::string> &);
-    void insert_row(const std::vector<std::string> &row);
+    //void insert_row(const std::vector<BaseType *> &row);
     void drop_table();
     void alter_table_drop_column(const std::string &);
+    void alter_table_add_column(const std::string &, int);
 };
 
 
