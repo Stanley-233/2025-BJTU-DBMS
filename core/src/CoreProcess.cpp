@@ -71,7 +71,29 @@ std::string CoreProcess::dropTable(const std::string &table_name) {
 
 std::string CoreProcess::alterTableAdd(const std::string &table_name, const std::string &col_name,
     const std::string &col_type) {
-    return "ERROR:WIP";
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t(path);
+    int type = -1;
+    switch (col_type) {
+        case "TEXT":
+            type = 0;
+            break;
+        case "INTEGER":
+            type = 1;
+            break;
+        case "DECIMAL":
+            type = 2;
+            break;
+        default:
+            return "ERROR: " + col_type + " is not a valid column type.";
+    }
+    t.alter_table_add_column(col_name, type);
+    free(&t);
+    return "Successfully altered table.";
 }
 
 std::string CoreProcess::alterTableDrop(const std::string &table_name, const std::string &col_name) {
@@ -88,5 +110,27 @@ std::string CoreProcess::alterTableDrop(const std::string &table_name, const std
 
 std::string CoreProcess::alterTableModify(const std::string &table_name, const std::string &col_name,
     const std::string &col_type) {
-    return "ERROR:WIP";
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t(path);
+    int type = -1;
+    switch (col_type) {
+        case "TEXT":
+            type = 0;
+        break;
+        case "INTEGER":
+            type = 1;
+        break;
+        case "DECIMAL":
+            type = 2;
+        break;
+        default:
+            return "ERROR: " + col_type + " is not a valid column type.";
+    }
+    t.alter_table_modify(col_name, type);
+    free(&t);
+    return "Successfully drop column.";
 }
