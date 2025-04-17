@@ -105,3 +105,37 @@ void Table::alter_table_add_column(const std::string & column_name, int type) {
     header_writer << column_types;
     header_stream.close();
 }
+
+void Table::alter_table_rename_column(const std::string &oldname, const std::string &newname) {
+    for (auto & i : table_headers)
+        if (i == oldname)
+            i = newname;
+    int temp = type_getter[oldname].get_type_id();
+    type_getter.erase(oldname);
+    type_getter.emplace(newname, temp);
+    std::filesystem::path table_path(this->file_name);
+    table_path.replace_extension(std::filesystem::path(".header"));
+    std::ofstream header_stream(table_path, std::ios::trunc);
+    auto header_writer = csv::make_csv_writer(header_stream);
+    header_writer << table_headers;
+    std::vector<int> column_types(0);
+    for (auto && i : table_headers)
+        column_types.emplace_back(type_getter[i].get_type_id());
+    header_writer << column_types;
+    header_stream.close();
+}
+
+void Table::alter_table_modify(const std::string &column_name, int type) {
+    type_getter[column_name] = TypeHandler(type);
+    std::filesystem::path table_path(this->file_name);
+    table_path.replace_extension(std::filesystem::path(".header"));
+    std::ofstream header_stream(table_path, std::ios::trunc);
+    auto header_writer = csv::make_csv_writer(header_stream);
+    header_writer << table_headers;
+    std::vector<int> column_types(0);
+    for (auto && i : table_headers)
+        column_types.emplace_back(type_getter[i].get_type_id());
+    header_writer << column_types;
+    header_stream.close();
+}
+
