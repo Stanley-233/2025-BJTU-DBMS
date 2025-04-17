@@ -52,13 +52,21 @@ std::string CoreProcess::useDatabase(const std::string &name) {
 std::string CoreProcess::createTable(const std::string &table_name,
     const std::vector<std::string> &columns_name,
     const std::unordered_map<std::string, TypeHandler> &colTypes) const {
-    if (currentDbName == "") return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
     Table::create_table(SYS_PATH + '/' + currentDbName, table_name, colTypes, columns_name);
     return "Successfully created table.";
 }
 
 std::string CoreProcess::dropTable(const std::string &table_name) {
-    return "ERROR:WIP";
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t(path);
+    t.drop_table();
+    free(&t);
+    return "Successfully drop table.";
 }
 
 std::string CoreProcess::alterTableAdd(const std::string &table_name, const std::string &col_name,
@@ -67,7 +75,15 @@ std::string CoreProcess::alterTableAdd(const std::string &table_name, const std:
 }
 
 std::string CoreProcess::alterTableDrop(const std::string &table_name, const std::string &col_name) {
-    return "ERROR:WIP";
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t(path);
+    t.alter_table_drop_column(col_name);
+    free(&t);
+    return "Successfully drop column.";
 }
 
 std::string CoreProcess::alterTableModify(const std::string &table_name, const std::string &col_name,

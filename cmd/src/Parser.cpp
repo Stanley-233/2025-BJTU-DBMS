@@ -82,10 +82,10 @@ std::string Parser::alterTable(const std::vector<std::string> &input) {
     const auto& tableName = input[2];
     const auto& command = input[3];
     if (command == "ADD") {
-        if (input.size() != 5) return "ERROR: Wrong Syntax.";
+        if (input.size() != 6) return "ERROR: Wrong Syntax.";
         output = _coreProcess.alterTableAdd(tableName, input[4], input[5]);
     } else if (command == "DROP") {
-        if (input.size() != 4) return "ERROR: Wrong Syntax.";
+        if (input.size() != 5) return "ERROR: Wrong Syntax.";
         output = _coreProcess.alterTableDrop(tableName, input[4]);
     } else if (command == "MODIFY") {
         // TODO: MODIFY SYNTAX DESIGN
