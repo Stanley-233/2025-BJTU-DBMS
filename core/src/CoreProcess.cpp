@@ -65,7 +65,6 @@ std::string CoreProcess::dropTable(const std::string &table_name) {
     }
     Table t(path);
     t.drop_table();
-    free(&t);
     return "Successfully drop table.";
 }
 
@@ -78,22 +77,16 @@ std::string CoreProcess::alterTableAdd(const std::string &table_name, const std:
     }
     Table t(path);
     int type = -1;
-    //这里的switch有bug
-    switch (col_type) {
-        case "TEXT":
-            type = 0;
-            break;
-        case "INTEGER":
-            type = 1;
-            break;
-        case "DECIMAL":
-            type = 2;
-            break;
-        default:
-            return "ERROR: " + col_type + " is not a valid column type.";
+    if (col_type == "TEXT") {
+        type = 0;
+    } else if (col_type == "INTEGER") {
+        type = 1;
+    } else if (col_type == "DECIMAL") {
+        type = 2;
+    } else {
+        return "ERROR: " + col_type + " is not a valid column type.";
     }
     t.alter_table_add_column(col_name, type);
-    free(&t);
     return "Successfully altered table.";
 }
 
@@ -105,7 +98,6 @@ std::string CoreProcess::alterTableDrop(const std::string &table_name, const std
     }
     Table t(path);
     t.alter_table_drop_column(col_name);
-    free(&t);
     return "Successfully drop column.";
 }
 
@@ -118,21 +110,26 @@ std::string CoreProcess::alterTableModify(const std::string &table_name, const s
     }
     Table t(path);
     int type = -1;
-    //这里也有
-    switch (col_type) {
-        case "TEXT":
-            type = 0;
-        break;
-        case "INTEGER":
-            type = 1;
-        break;
-        case "DECIMAL":
-            type = 2;
-        break;
-        default:
-            return "ERROR: " + col_type + " is not a valid column type.";
+    if (col_type == "TEXT") {
+        type = 0;
+    } else if (col_type == "INTEGER") {
+        type = 1;
+    } else if (col_type == "DECIMAL") {
+        type = 2;
+    } else {
+        return "ERROR: " + col_type + " is not a valid column type.";
     }
     t.alter_table_modify(col_name, type);
-    free(&t);
     return "Successfully drop column.";
+}
+
+std::string CoreProcess::renameTable(const std::string &old_table_name, const std::string &new_table_name) {
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + old_table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t(path);
+    t.alter_table_rename_table(new_table_name);
+    return "Successfully renamed table.";
 }

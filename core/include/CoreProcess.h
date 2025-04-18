@@ -32,6 +32,7 @@ public:
     std::string alterTableAdd(const std::string& table_name, const std::string& col_name, const std::string& col_type);
     std::string alterTableDrop(const std::string& table_name, const std::string& col_name);
     std::string alterTableModify(const std::string& table_name, const std::string& col_name, const std::string& col_type);
+    std::string renameTable(const std::string& old_table_name, const std::string& new_table_name);
 private:
     std::string currentDbName;
     const std::string SYS_PATH = "system";
