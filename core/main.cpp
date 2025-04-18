@@ -10,6 +10,5 @@ int main() {
                                                     {"Email", TypeHandler(0)} };
     Table::create_table(path, table_name, types, header);
     Table t(path + "/" + table_name);
-    t.alter_table_drop_column("Name");
-    t.alter_table_add_column("Name", 0);
+    t.alter_table_rename_table("nooo");
 }

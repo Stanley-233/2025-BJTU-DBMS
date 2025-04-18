@@ -146,7 +146,7 @@ void Table::alter_table_rename_table(const std::string & new_name) {
     std::filesystem::rename(table_path, new_path);
     table_path.assign(file_name);
     table_path.replace_extension(std::filesystem::path(".header"));
-    new_path.replace_extension(std::filesystem::path(new_name + ".header"));
+    new_path.replace_extension(std::filesystem::path(".header"));
     std::filesystem::rename(table_path, new_path);
     file_name = new_path.replace_extension(std::filesystem::path(".csv")).string();
     csv::CSVFormat table_format;
