@@ -5,6 +5,26 @@
 #include "Table.h"
 #include <filesystem>
 
+int Table::check_row(const std::unordered_map<std::string, std::string> &row) const {
+    //错误码：
+    //1: too many values
+    //2: bian bu xia qu le
+    if (row.size() > table_headers.size())
+        return 1;
+    return 0;
+}
+
+std::vector<std::string> Table::fill_row(std::unordered_map<std::string, std::string> &row) {
+    std::vector<std::string> result(0);
+    for (const auto & h : table_headers) {
+        if (row.count(h) == 0) {
+            result.emplace_back("%NULL%");
+        }
+        result.emplace_back(row[h]);
+    }
+    return result;
+}
+
 Table::Table(const std::string &file_name) {
     this->file_name = file_name + ".csv";
     csv::CSVFormat table_format;
@@ -148,6 +168,12 @@ void Table::alter_table_rename_table(const std::string & new_name) {
 }
 
 
-int Table::insert_row(const std::vector<std::string> &row) {
+int Table::insert_row(std::unordered_map<std::string, std::string>& row) {
+    const int error_code = check_row(row);
+    if (error_code != 0)
+        return error_code;
+    std::ofstream temp_writer(file_name, std::ios::trunc);
+    auto row_writer = csv::make_csv_writer(temp_writer);
+    row_writer << fill_row(row);
     return 0;
 }

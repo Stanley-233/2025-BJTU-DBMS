@@ -18,7 +18,8 @@ class Table {
     std::ofstream table_stream;
     std::unordered_map<std::string, int> type_getter;
     std::vector<std::string> table_headers;
-    bool check_row(const std::vector<std::string> &row);
+    int check_row(const std::unordered_map<std::string, std::string> &row) const;
+    std::vector<std::string> fill_row(std::unordered_map<std::string, std::string> &row);
 public:
     explicit Table(const std::string &file_name);
     ~Table();
@@ -26,7 +27,7 @@ public:
         const std::string &,
         std::unordered_map<std::string, int>,
         const std::vector<std::string> &);
-    int insert_row(const std::vector<std::string> &row);
+    int insert_row(std::unordered_map<std::string, std::string> &);
     void drop_table();
     void alter_table_drop_column(const std::string &);
     void alter_table_add_column(const std::string &, int);
