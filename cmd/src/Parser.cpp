@@ -30,6 +30,13 @@ std::string Parser::parse(const std::vector<std::string> &input) {
             output = alterTable(input);
         }
     }
+    if (input[0] == "INSERT") {
+        if (input.size() < 4 || input[1] != "INTO") {
+            output = "ERROR: Invalid Command.";
+        } else {
+            output = insertIntoTable(input);
+        }
+    }
     return output;
 }
 
@@ -94,5 +101,26 @@ std::string Parser::alterTable(const std::vector<std::string> &input) {
         if (input.size() != 5) return "ERROR: Wrong Syntax.";
         output = _coreProcess.renameTable(tableName, input[4]);
     }
+    return output;
+}
+
+std::string Parser::insertIntoTable(const std::vector<std::string> &input) {
+    const auto& tableName = input[2];
+    std::vector<std::string> colNames;
+    int i = 0;
+    for (i = 3; i < input.size(); i++) {
+        if (input[i] == "VALUES") break;
+        colNames.emplace_back(input[i]);
+    }
+    if (input.size() != i + 1 + colNames.size()) {
+        return "ERROR: Wrong Syntax.";
+    }
+    std::unordered_map<std::string, std::string> colMap;
+    int k = 0;
+    for (int j = i + 1; j < input.size(); j++) {
+        colMap.emplace(colNames[k], input[j]);
+        k++;
+    }
+    std::string output = _coreProcess.insertIntoTable(tableName, colMap);
     return output;
 }

@@ -133,3 +133,9 @@ std::string CoreProcess::renameTable(const std::string &old_table_name, const st
     t.alter_table_rename_table(new_table_name);
     return "Successfully renamed table.";
 }
+
+std::string CoreProcess::insertIntoTable(const std::string &table_name,
+    const std::unordered_map<std::string, std::string> &colMap) {
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    return "Successfully inserted into table " + table_name + " .";
+}

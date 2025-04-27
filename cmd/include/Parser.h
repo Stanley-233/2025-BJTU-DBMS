@@ -25,6 +25,7 @@ private:
     std::string createTable(const std::vector<std::string>& input);
     std::string dropTable(const std::vector<std::string>& input);
     std::string alterTable(const std::vector<std::string>& input);
+    std::string insertIntoTable(const std::vector<std::string>& input);
 };
 
 
