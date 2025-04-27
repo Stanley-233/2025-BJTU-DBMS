@@ -51,7 +51,7 @@ std::string CoreProcess::useDatabase(const std::string &name) {
 
 std::string CoreProcess::createTable(const std::string &table_name,
     const std::vector<std::string> &columns_name,
-    const std::unordered_map<std::string, TypeHandler> &colTypes) const {
+    const std::unordered_map<std::string, int> &colTypes) const {
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
     Table::create_table(SYS_PATH + '/' + currentDbName, table_name, colTypes, columns_name);
     return "Successfully created table.";

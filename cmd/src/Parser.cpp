@@ -52,17 +52,17 @@ std::string Parser::createTable(const std::vector<std::string> &input) {
     if (input.size() % 2 != 1 || input.size() < 5) return "ERROR: Wrong Syntax.";
     std::string output = WIP;
     const auto& tableName = input[2];
-    std::unordered_map<std::string, TypeHandler> colTypes;
+    std::unordered_map<std::string, int> colTypes;
     std::vector<std::string> colNames;
     for (int i = 3; i < input.size(); i+=2) {
         std::string colName = input[i];
         std::string colType = input[i + 1];\
         if (colType == "INTEGER" || colType == "INT") {
-            colTypes.emplace(colName, TypeHandler(1));
+            colTypes.emplace(colName, 1);
         } else if (colType == "TEXT") {
-            colTypes.emplace(colName, TypeHandler(0));
+            colTypes.emplace(colName, 0);
         } else if (colType == "DECIMAL") {
-            colTypes.emplace(colName, TypeHandler(2));
+            colTypes.emplace(colName, 2);
         } else {
             return "ERROR: Wrong Datatype. Supported types: INTEGER, INT, TEXT, DECIMAL.";
         }

@@ -20,14 +20,14 @@ public:
     static CoreProcess& getInstance();
 
     // ---TABLE---
-    std::string createDatabase(const std::string& name) const;
-    std::string dropDatabase(const std::string& name) const;
+    [[nodiscard]] std::string createDatabase(const std::string& name) const;
+    [[nodiscard]] std::string dropDatabase(const std::string& name) const;
     std::string useDatabase(const std::string& name);
 
     // TABLE
-    std::string createTable(const std::string &table_name,
+    [[nodiscard]] std::string createTable(const std::string &table_name,
                             const std::vector<std::string> &columns_name,
-                            const std::unordered_map<std::string, TypeHandler> &colTypes) const;
+                            const std::unordered_map<std::string, int> &colTypes) const;
     std::string dropTable(const std::string& table_name);
     std::string alterTableAdd(const std::string& table_name, const std::string& col_name, const std::string& col_type);
     std::string alterTableDrop(const std::string& table_name, const std::string& col_name);
