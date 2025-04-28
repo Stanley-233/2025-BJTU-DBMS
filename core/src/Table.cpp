@@ -167,13 +167,13 @@ void Table::alter_table_rename_table(const std::string & new_name) {
     table_reader = new csv::CSVReader(file_name, table_format);
 }
 
-
 int Table::insert_row(std::unordered_map<std::string, std::string>& row) {
     const int error_code = check_row(row);
     if (error_code != 0)
         return error_code;
-    std::ofstream temp_writer(file_name, std::ios::trunc);
+    std::ofstream temp_writer(file_name, std::ios::app);
     auto row_writer = csv::make_csv_writer(temp_writer);
     row_writer << fill_row(row);
+    temp_writer.close();
     return 0;
 }
