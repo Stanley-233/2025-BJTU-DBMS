@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 std::string Parser::parse(const std::vector<std::string> &input) {
-    std::string output;
+    std::string output = "ERROR: Invalid syntax";
     if (input.empty()) return "ERROR: No Command Given.";
     // DATABASE
     if (input[1] == "DATABASE") {
@@ -42,6 +42,13 @@ std::string Parser::parse(const std::vector<std::string> &input) {
             output = "ERROR: Invalid syntax.";
         } else {
             output = DeleteFromTable(input);
+        }
+    }
+    if (input[0] == "UPDATE") {
+        if (input.size() < 6 || input[2] != "SET") {
+            output = "ERROR: Invalid syntax.";
+        } else {
+            output = UpdateRecord(input);
         }
     }
     return output;
@@ -145,3 +152,23 @@ std::string Parser::DeleteFromTable(const std::vector<std::string> &input) {
     std::string output = _coreProcess.DeleteFromTable(tableName, conditions);
     return output;
 }
+
+std::string Parser::UpdateRecord(const std::vector<std::string> &input) {
+    const auto& tableName = input[2];
+    std::unordered_map<std::string, std::string> values;
+    std::unordered_map<std::string, std::string> conditions;
+    int i = 3;
+    for (; i < input.size(); i+=3) {
+        if (input[i] == "WHERE") break;
+        if (input[i+1] != "=") return "ERROR: Wrong syntax.";
+        values.emplace(input[i], input[i+2]);
+    }
+    // 是 WHERE
+    for (++i; i < input.size(); i+=3) {
+        if (input[i+1] != "=") return "ERROR: Wrong syntax.";
+        conditions.emplace(input[i], input[i+2]);
+    }
+    std::string output = _coreProcess.UpdateTableRecord(tableName, values, conditions);
+    return output;
+}
+
