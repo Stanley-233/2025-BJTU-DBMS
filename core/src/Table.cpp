@@ -4,13 +4,18 @@
 
 #include "Table.h"
 #include <filesystem>
+#include <algorithm>
 
 int Table::check_row(const std::unordered_map<std::string, std::string> &row) const {
     //错误码：
-    //1: too many values
-    //2: bian bu xia qu le
+    //1: too many values.
+    //2: certain column don't exist.
     if (row.size() > table_headers.size())
         return 1;
+    for (const auto &p :  row) {
+        if (std::find(table_headers.begin(), table_headers.end(), p.first) == table_headers.end())
+            return 2;
+    }
     return 0;
 }
 
@@ -19,6 +24,7 @@ std::vector<std::string> Table::fill_row(std::unordered_map<std::string, std::st
     for (const auto & h : table_headers) {
         if (row.count(h) == 0) {
             result.emplace_back("%NULL%");
+            continue;
         }
         result.emplace_back(row[h]);
     }

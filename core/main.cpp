@@ -10,6 +10,6 @@ int main() {
                                                     {"Email", 0} };
     Table::create_table(path, table_name, types, header);
     Table t(path + "/" + table_name);
-    std::unordered_map<std::string, std::string> temp_row{{"Name", "mzf"}, {"Author", "John"}, {"Email",   "Mzf"}};
+    std::unordered_map<std::string, std::string> temp_row{{"Name111", "mzf"}, {"Email",   "Mzf"}};
     std::cout << t.insert_row(temp_row);
 }
