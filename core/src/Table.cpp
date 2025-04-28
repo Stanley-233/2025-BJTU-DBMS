@@ -183,3 +183,41 @@ int Table::insert_row(std::unordered_map<std::string, std::string>& row) {
     temp_writer.close();
     return 0;
 }
+
+int Table::delete_rows(std::unordered_map<std::string, std::string> & conditions) {
+    if (const int error_code = check_row(conditions); error_code != 0)
+        return error_code;
+    int rows_deleted = 0;
+    std::filesystem::path table_path(this->file_name), original_path(this->file_name);
+    table_path.replace_extension(std::filesystem::path(".tmp"));
+    std::ofstream temp_writer(table_path, std::ios::trunc);
+    auto row_writer = csv::make_csv_writer(temp_writer);
+    row_writer << table_headers;
+    for (auto & row : *table_reader) {
+        bool not_deleted = false;
+        for (auto & c : conditions)
+            if (row[c.first].get<std::string>() != c.second) {
+                not_deleted = true;
+                ++rows_deleted;
+            }
+        if (not_deleted) {
+            std::vector<std::string> temp_row(0);
+            for (auto & h : table_headers)
+                temp_row.emplace_back(row[h].get<std::string>());
+            row_writer << temp_row;
+        }
+    }
+    temp_writer.close();
+    delete table_reader;
+    table_path.replace_extension(std::filesystem::path(".del"));
+    std::filesystem::rename(original_path, table_path);
+    original_path.replace_extension(std::filesystem::path(".tmp"));
+    table_path.replace_extension(std::filesystem::path(".csv"));
+    std::filesystem::rename(original_path, table_path);
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(file_name, table_format);
+    return rows_deleted;
+}
