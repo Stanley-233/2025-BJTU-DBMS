@@ -33,7 +33,10 @@ public:
     std::string alterTableDrop(const std::string& table_name, const std::string& col_name);
     std::string alterTableModify(const std::string& table_name, const std::string& col_name, const std::string& col_type);
     std::string renameTable(const std::string& old_table_name, const std::string& new_table_name);
+    // key = colname, value = value
     std::string insertIntoTable(const std::string &table_name, std::unordered_map<std::string, std::string> &colMap);
+    // key = colname, value = condition value
+    std::string DeleteFromTable(const std::string& table_name, std::unordered_map<std::string, std::string> &conditions);
 private:
     std::string currentDbName;
     const std::string SYS_PATH = "system";

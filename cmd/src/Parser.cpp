@@ -32,9 +32,16 @@ std::string Parser::parse(const std::vector<std::string> &input) {
     }
     if (input[0] == "INSERT") {
         if (input.size() < 4 || input[1] != "INTO") {
-            output = "ERROR: Invalid Command.";
+            output = "ERROR: Invalid syntax.";
         } else {
             output = insertIntoTable(input);
+        }
+    }
+    if (input[0] == "DELETE") {
+        if (input.size() < 3 || input[1] != "FROM") {
+            output = "ERROR: Invalid syntax.";
+        } else {
+            output = DeleteFromTable(input);
         }
     }
     return output;
@@ -113,7 +120,7 @@ std::string Parser::insertIntoTable(const std::vector<std::string> &input) {
         colNames.emplace_back(input[i]);
     }
     if (input.size() != i + 1 + colNames.size()) {
-        return "ERROR: Wrong Syntax.";
+        return "ERROR: Wrong syntax.";
     }
     std::unordered_map<std::string, std::string> colMap;
     int k = 0;
@@ -122,5 +129,19 @@ std::string Parser::insertIntoTable(const std::vector<std::string> &input) {
         k++;
     }
     std::string output = _coreProcess.insertIntoTable(tableName, colMap);
+    return output;
+}
+
+std::string Parser::DeleteFromTable(const std::vector<std::string> &input) {
+    const auto& tableName = input[2];
+    std::unordered_map<std::string, std::string> conditions;
+    if (input.size() > 3) {
+        if (input[3] != "WHERE" || input.size() < 7 || (input.size()-4)%3!=0) return "ERROR: Wrong syntax.";
+        for (int i = 4; i < input.size(); i++) {
+            if (input[i+1] != "=") return "ERROR: Wrong syntax.";
+            conditions.emplace(input[i], input[i+2]);
+        }
+    }
+    std::string output = _coreProcess.DeleteFromTable(tableName, conditions);
     return output;
 }
