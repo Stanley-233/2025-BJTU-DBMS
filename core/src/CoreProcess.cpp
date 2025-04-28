@@ -142,8 +142,16 @@ std::unordered_map<std::string, std::string> &colMap) {
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    t.insert_row(colMap);
-    return "Successfully inserted into table " + table_name + " .";
+    switch (t.insert_row(colMap)) {
+        case 0:
+            return "Successfully inserted into table " + table_name + " .";
+        case 1:
+            return "Column number invalid. ";
+        case 2:
+            return "Column name didn't exist. ";
+        default:
+            return "Super Big Error!!!";
+    }
 }
 
 std::string CoreProcess::DeleteFromTable(const std::string &table_name,
