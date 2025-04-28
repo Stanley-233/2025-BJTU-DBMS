@@ -135,7 +135,13 @@ std::string CoreProcess::renameTable(const std::string &old_table_name, const st
 }
 
 std::string CoreProcess::insertIntoTable(const std::string &table_name,
-    const std::unordered_map<std::string, std::string> &colMap) {
+std::unordered_map<std::string, std::string> &colMap) {
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t(path);
+    t.insert_row(colMap);
     return "Successfully inserted into table " + table_name + " .";
 }

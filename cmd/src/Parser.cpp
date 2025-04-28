@@ -9,7 +9,7 @@
 
 std::string Parser::parse(const std::vector<std::string> &input) {
     std::string output;
-    if (input.size() <= 0) return "ERROR: No Command Given.";
+    if (input.empty()) return "ERROR: No Command Given.";
     // DATABASE
     if (input[1] == "DATABASE") {
         if (input[0] == "CREATE") {
@@ -63,7 +63,7 @@ std::string Parser::createTable(const std::vector<std::string> &input) {
     std::vector<std::string> colNames;
     for (int i = 3; i < input.size(); i+=2) {
         std::string colName = input[i];
-        std::string colType = input[i + 1];\
+        const std::string& colType = input[i + 1];\
         if (colType == "INTEGER" || colType == "INT") {
             colTypes.emplace(colName, 1);
         } else if (colType == "TEXT") {
