@@ -36,6 +36,8 @@ public:
     void alter_table_rename_table(const std::string &);
     int insert_row(std::unordered_map<std::string, std::string> &);
     int delete_rows(std::unordered_map<std::string, std::string> &);
+    int update_rows(std::unordered_map<std::string, std::string> &,
+                    std::unordered_map<std::string, std::string> &);
 };
 
 

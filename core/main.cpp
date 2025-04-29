@@ -17,6 +17,7 @@ int main() {
     std::cout << t.insert_row(temp_row2);
     std::cout << t.insert_row(temp_row2);
     std::cout << t.insert_row(temp_row2);
-    std::unordered_map<std::string, std::string> temp_condition{{"Email", "Mzf"}};
-    t.delete_rows(temp_condition);
+    std::unordered_map<std::string, std::string> temp_condition{{"Email", "111"}};
+    std::unordered_map<std::string, std::string> temp_update{{"Email", "222"}};
+    std::cout << t.update_rows(temp_condition, temp_update);
 }

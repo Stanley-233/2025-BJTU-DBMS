@@ -205,7 +205,9 @@ int Table::delete_rows(std::unordered_map<std::string, std::string> & conditions
             for (auto & h : table_headers)
                 temp_row.emplace_back(row[h].get<std::string>());
             row_writer << temp_row;
+            continue;
         }
+        ++rows_deleted;
     }
     temp_writer.close();
     delete table_reader;
@@ -220,4 +222,54 @@ int Table::delete_rows(std::unordered_map<std::string, std::string> & conditions
                 .header_row(0);
     table_reader = new csv::CSVReader(file_name, table_format);
     return rows_deleted;
+}
+
+int Table::update_rows( std::unordered_map<std::string, std::string> &conditions,
+                        std::unordered_map<std::string, std::string> &values_to_be_updated) {
+    if (const int error_code = check_row(conditions); error_code != 0)
+        return error_code;
+    if (const int error_code = check_row(values_to_be_updated); error_code != 0)
+        return error_code;
+    int rows_updated = 0;
+    std::filesystem::path table_path(this->file_name), original_path(this->file_name);
+    table_path.replace_extension(std::filesystem::path(".tmp"));
+    std::ofstream temp_writer(table_path, std::ios::trunc);
+    auto row_writer = csv::make_csv_writer(temp_writer);
+    row_writer << table_headers;
+    for (auto & row : *table_reader) {
+        bool not_updated = false;
+        for (auto & c : conditions)
+            if (row[c.first].get<std::string>() != c.second)
+                not_updated = true;
+        if (not_updated) {
+            std::vector<std::string> temp_row(0);
+            for (auto & h : table_headers)
+                temp_row.emplace_back(row[h].get<std::string>());
+            row_writer << temp_row;
+        }
+        else {
+            ++rows_updated;
+            std::vector<std::string> temp_row(0);
+            for (auto & h : table_headers) {
+                if (values_to_be_updated.find(h) != values_to_be_updated.end())
+                    temp_row.emplace_back(values_to_be_updated[h]);
+                else
+                    temp_row.emplace_back(row[h].get<std::string>());
+            }
+            row_writer << temp_row;
+        }
+    }
+    temp_writer.close();
+    delete table_reader;
+    table_path.replace_extension(std::filesystem::path(".del"));
+    std::filesystem::rename(original_path, table_path);
+    original_path.replace_extension(std::filesystem::path(".tmp"));
+    table_path.replace_extension(std::filesystem::path(".csv"));
+    std::filesystem::rename(original_path, table_path);
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(file_name, table_format);
+    return rows_updated;
 }
