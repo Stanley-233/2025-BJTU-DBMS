@@ -37,10 +37,18 @@ public:
     std::string insertIntoTable(const std::string &table_name, std::unordered_map<std::string, std::string> &colMap);
     // key = colname, value = condition value
     std::string DeleteFromTable(const std::string& table_name, std::unordered_map<std::string, std::string> &conditions);
-
+    // col_values:(colname, new_value)
     std::string UpdateTableRecord(const std::string& table_name,
         std::unordered_map<std::string, std::string> &col_values,
         std::unordered_map<std::string, std::string> &conditions);
+
+    // Query
+    std::string SelectAllFromTable(const std::string& table_name,
+        std::unordered_map<std::string, std::string> &conditions);
+    std::string SelectColFromTable(const std::string& table_name,
+        std::vector<std::string> &columns,
+        std::unordered_map<std::string, std::string> &conditions);
+
 private:
     std::string currentDbName;
     const std::string SYS_PATH = "system";

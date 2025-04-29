@@ -28,6 +28,8 @@ private:
     std::string insertIntoTable(const std::vector<std::string>& input);
     std::string DeleteFromTable(const std::vector<std::string>& input);
     std::string UpdateRecord(const std::vector<std::string>& input);
+
+    std::string SelectFromTable(const std::vector<std::string>& input);
 };
 
 
