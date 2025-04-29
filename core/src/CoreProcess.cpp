@@ -188,7 +188,9 @@ std::string CoreProcess::SelectAllFromTable(const std::string &table_name,
     if (!fs::exists(path + ".csv")) {
         return "ERROR: Table not exist.";
     }
-    std::string output = "";
+    Table t(path);
+    std::vector<std::string> rows(0);
+    std::string output = t.select_rows(conditions, rows);
     return output;
 }
 
@@ -200,6 +202,7 @@ std::string CoreProcess::SelectColFromTable(const std::string &table_name, std::
     if (!fs::exists(path + ".csv")) {
         return "ERROR: Table not exist.";
     }
-    std::string output = "";
+    Table t(path);
+    std::string output = t.select_rows(conditions, columns);
     return output;
 }
