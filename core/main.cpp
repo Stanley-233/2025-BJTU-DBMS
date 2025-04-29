@@ -12,12 +12,12 @@ int main() {
     Table t(path + "/" + table_name);
     std::unordered_map<std::string, std::string> temp_row1{{"Name", "mzf"}, {"Email", "Mzf"}};
     std::unordered_map<std::string, std::string> temp_row2{{"Name", "222"}, {"Email", "111"}};
-    std::cout << t.insert_row(temp_row1);
-    std::cout << t.insert_row(temp_row2);
-    std::cout << t.insert_row(temp_row2);
-    std::cout << t.insert_row(temp_row2);
-    std::cout << t.insert_row(temp_row2);
+    t.insert_row(temp_row1);
+    t.insert_row(temp_row2);
+    t.insert_row(temp_row2);
+    t.insert_row(temp_row2);
+    t.insert_row(temp_row2);
     std::unordered_map<std::string, std::string> temp_condition{{"Email", "111"}};
-    std::unordered_map<std::string, std::string> temp_update{{"Email", "222"}};
-    std::cout << t.update_rows(temp_condition, temp_update);
+    std::vector<std::string> temp_header = {"Author", "Name", "Email"};
+    std::cout << t.select_rows(temp_condition, temp_header);
 }

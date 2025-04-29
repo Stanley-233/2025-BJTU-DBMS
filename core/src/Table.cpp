@@ -273,3 +273,41 @@ int Table::update_rows( std::unordered_map<std::string, std::string> &conditions
     table_reader = new csv::CSVReader(file_name, table_format);
     return rows_updated;
 }
+
+std::string Table::select_rows(std::unordered_map<std::string, std::string> &conditions,
+                                            std::vector<std::string> &selected_columns) {
+    if (selected_columns.size() == 0)
+        selected_columns = table_headers;
+    else if (selected_columns.size() > table_headers.size()) {
+        return "Too Many Columns!";
+    }
+    for (auto & c : selected_columns)
+        if (std::find(table_headers.begin(), table_headers.end(), c) == selected_columns.end())
+            return "Invalid Column!";
+    switch (check_row(conditions)) {
+        case 0:
+            break;
+        case 1:
+            return "Too Many Columns!";
+        case 2:
+            return "Invalid Columns!";
+        default:
+            return "Super Big Mistakes!";
+    }
+    std::stringstream result;
+    auto output_table_writer = csv::make_csv_writer(result);
+    output_table_writer << selected_columns;
+    for (auto & row : *table_reader) {
+        bool not_selected = false;
+        for (auto & c : conditions)
+            if (row[c.first].get<std::string>() != c.second)
+                not_selected = true;
+        if (!not_selected) {
+            std::vector<std::string> temp_row(0);
+            for (auto & h : selected_columns)
+                temp_row.emplace_back(row[h].get<std::string>());
+            output_table_writer << temp_row;
+        }
+    }
+    return result.str();
+}

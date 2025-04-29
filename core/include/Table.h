@@ -38,6 +38,8 @@ public:
     int delete_rows(std::unordered_map<std::string, std::string> &);
     int update_rows(std::unordered_map<std::string, std::string> &,
                     std::unordered_map<std::string, std::string> &);
+    std::string select_rows(   std::unordered_map<std::string, std::string> &,
+                                            std::vector<std::string> &);
 };
 
 
