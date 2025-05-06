@@ -282,7 +282,7 @@ std::string Table::select_rows(std::unordered_map<std::string, std::string> &con
         return "Too Many Columns!";
     }
     for (auto & c : selected_columns)
-        if (std::find(table_headers.begin(), table_headers.end(), c) == selected_columns.end())
+        if (std::find(table_headers.begin(), table_headers.end(), c) == table_headers.end())
             return "Invalid Column!";
     switch (check_row(conditions)) {
         case 0:

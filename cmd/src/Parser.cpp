@@ -190,8 +190,8 @@ std::string Parser::SelectFromTable(const std::vector<std::string> &input) {
     }
     const auto& tableName = input[++i];
     std::unordered_map<std::string, std::string> conditions;
-    if (!++i >= input.size()) {
-        if (input[i] != "WHERE") return "ERROR: Invalid syntax.";
+    if (input.size() > 4) {
+        if (input[++i] != "WHERE") return "ERROR: Invalid syntax.";
         ++i;
         for (; i < input.size(); i+=3) {
             if (input[i+1] != "=") return "ERROR: Invalid syntax.";
