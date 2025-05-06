@@ -189,14 +189,16 @@ std::string Parser::SelectFromTable(const std::vector<std::string> &input) {
         colNames.emplace_back(input[i]);
     }
     const auto& tableName = input[++i];
-    if (input[++i] != "WHERE") return "ERROR: Invalid syntax.";
-    ++i;
     std::unordered_map<std::string, std::string> conditions;
-    for (; i < input.size(); i+=3) {
-        if (input[i+1] != "=") return "ERROR: Invalid syntax.";
-        conditions.emplace(input[i], input[i+2]);
+    if (!++i >= input.size()) {
+        if (input[i] != "WHERE") return "ERROR: Invalid syntax.";
+        ++i;
+        for (; i < input.size(); i+=3) {
+            if (input[i+1] != "=") return "ERROR: Invalid syntax.";
+            conditions.emplace(input[i], input[i+2]);
+        }
+        if (colNames.empty()) return "ERROR: Invalid syntax.";
     }
-    if (colNames.empty()) return "ERROR: Invalid syntax.";
     std::string output;
     if (colNames[0] == "*") {
         output = _coreProcess.SelectAllFromTable(tableName, conditions);
