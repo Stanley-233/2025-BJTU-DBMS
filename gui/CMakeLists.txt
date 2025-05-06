@@ -21,6 +21,8 @@ include_directories(
 )
 
 set(PROJECT_SOURCES
+        createtabledialog.h
+        createtabledialog.cpp
         main.cpp
         ui/mainwindow.cpp
         ui/mainwindow.h
