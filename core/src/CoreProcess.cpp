@@ -176,13 +176,11 @@ std::string CoreProcess::UpdateTableRecord(const std::string &table_name,
     }
     Table t(path);
     int ret = 0;
-    // TODO
     return ret + " records updated from " + table_name + " .";
 }
 
 std::string CoreProcess::SelectAllFromTable(const std::string &table_name,
     std::unordered_map<std::string, std::string> &conditions) {
-    // TODO
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
     auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
     if (!fs::exists(path + ".csv")) {
@@ -196,7 +194,6 @@ std::string CoreProcess::SelectAllFromTable(const std::string &table_name,
 
 std::string CoreProcess::SelectColFromTable(const std::string &table_name, std::vector<std::string> &columns,
     std::unordered_map<std::string, std::string> &conditions) {
-    // TODO
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
     auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
     if (!fs::exists(path + ".csv")) {
@@ -204,5 +201,20 @@ std::string CoreProcess::SelectColFromTable(const std::string &table_name, std::
     }
     Table t(path);
     std::string output = t.select_rows(conditions, columns);
+    return output;
+}
+
+std::string CoreProcess::SelectFromTabelJoin(const std::string &table_name, std::vector<std::string> &columns,
+    std::unordered_map<std::string, std::string> &conditions, const std::string &join_table_name,
+    const std::string &this_join_column_name, const std::string &other_join_column_name) {
+    if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
+    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    // TODO
+    Table t(path);
+    std::vector<std::string> rows(0);
+    std::string output = t.select_rows(conditions, rows);
     return output;
 }

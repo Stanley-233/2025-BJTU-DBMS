@@ -194,14 +194,30 @@ std::string Parser::SelectFromTable(const std::vector<std::string> &input) {
         if (input[++i] != "WHERE") return "ERROR: Invalid syntax.";
         ++i;
         for (; i < input.size(); i+=3) {
+            if (input[i] == "JOIN") break;
             if (input[i+1] != "=") return "ERROR: Invalid syntax.";
             conditions.emplace(input[i], input[i+2]);
         }
         if (colNames.empty()) return "ERROR: Invalid syntax.";
     }
+    // JOIN tablename ON Col1 = Col2
+    ++i;
+    std::string join_table_name, this_col_name, other_col_name;
+    if (i < input.size()) {
+        for (; i < input.size(); i+=5) {
+            join_table_name = input[i];
+            if (input[i+1] != "ON") return "ERROR: Invalid syntax.";
+            this_col_name = input[i+2];
+            if (input[i+3] != "=") return "ERROR: Invalid syntax.";
+            other_col_name = input[i+4];
+        }
+    }
     std::string output;
     if (colNames[0] == "*") {
         output = _coreProcess.SelectAllFromTable(tableName, conditions);
+    } else if (!join_table_name.empty()) {
+        output = _coreProcess.SelectFromTabelJoin(tableName, colNames, conditions,
+            join_table_name, this_col_name, other_col_name);
     } else {
         output = _coreProcess.SelectColFromTable(tableName, colNames, conditions);
     }

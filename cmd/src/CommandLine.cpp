@@ -7,6 +7,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <fstream>
 
 CommandLine & CommandLine::getInstance() {
     static CommandLine instance;
@@ -29,6 +30,10 @@ void CommandLine::start() {
         if (status == -1) continue;
         if (status == 0) {
             // finish
+            if (result[0] == "EXECUTE") {
+                ReadSqlBatch(result[1]);
+                continue;
+            }
             auto message = _parser.parse(result);
             std::cout << message << std::endl;
             result.clear();
@@ -56,5 +61,28 @@ int CommandLine::tokenize(std::string &str, std::vector<std::string> &result) {
     while (ss >> token) {
         result.push_back(token);
     }
+    return ret;
+}
+
+int CommandLine::ReadSqlBatch(std::string& file_name) {
+    int ret = 0;
+    std::ifstream file(file_name);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << file_name << std::endl;
+        return -2;
+    }
+    std::string line;
+    std::vector<std::string> result;
+    while (std::getline(file, line)) {
+        preProcess(line);
+        auto status = tokenize(line, result);
+        if (status == -1) continue;
+        if (status == 0) {
+            auto message = _parser.parse(result);
+            std::cout << message << std::endl;
+            result.clear();
+        }
+    }
+    file.close();
     return ret;
 }

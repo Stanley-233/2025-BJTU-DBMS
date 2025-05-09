@@ -31,6 +31,9 @@ private:
 
     // Running
     static inline int tokenize(std::string& str, std::vector<std::string>& result);
+
+    // 批处理
+    inline int ReadSqlBatch(std::string& file_name);
 };
 
 

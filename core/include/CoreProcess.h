@@ -48,6 +48,12 @@ public:
     std::string SelectColFromTable(const std::string& table_name,
         std::vector<std::string> &columns,
         std::unordered_map<std::string, std::string> &conditions);
+    std::string SelectFromTabelJoin(const std::string& table_name,
+        std::vector<std::string> &columns,
+        std::unordered_map<std::string, std::string> &conditions,
+        const std::string& join_table_name,
+        const std::string& this_join_column_name,
+        const std::string& other_join_column_name);
 
 private:
     std::string currentDbName;
