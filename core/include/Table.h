@@ -38,8 +38,17 @@ public:
     int delete_rows(std::unordered_map<std::string, std::string> &);
     int update_rows(std::unordered_map<std::string, std::string> &,
                     std::unordered_map<std::string, std::string> &);
-    std::string select_rows(   std::unordered_map<std::string, std::string> &,
-                                            std::vector<std::string> &);
+    std::string select_rows(
+        std::unordered_map<std::string, std::string> &,
+        std::vector<std::string> &);
+    friend std::string select_with_join(
+        Table & table1, Table & table2,
+        std::vector<std::string> &columns_in_table1,
+        std::vector<std::string> &columns_in_table2,
+        std::unordered_map<std::string, std::string> &table1_conditions,
+        std::unordered_map<std::string, std::string> &table2_conditions,
+        std::string &on_table1_column,
+        std::string &on_table2_column);
 };
 
 

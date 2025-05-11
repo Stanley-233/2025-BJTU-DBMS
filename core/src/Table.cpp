@@ -311,3 +311,87 @@ std::string Table::select_rows(std::unordered_map<std::string, std::string> &con
     }
     return result.str();
 }
+
+std::string select_with_join(
+    Table &table1, Table &table2,
+    std::vector<std::string> &columns_in_table1,
+    std::vector<std::string> &columns_in_table2,
+    std::unordered_map<std::string, std::string> &table1_conditions,
+    std::unordered_map<std::string, std::string> &table2_conditions,
+    std::string &on_table1_column, std::string &on_table2_column) {
+    if (columns_in_table1.size() > table1.table_headers.size()) {
+        return "Too Many Columns!";
+    }
+    for (auto & c : columns_in_table1)
+        if (std::find(columns_in_table1.begin(), columns_in_table1.end(), c) == columns_in_table1.end())
+            return "Invalid Column!";
+    if (columns_in_table2.size() > table2.table_headers.size()) {
+        return "Too Many Columns!";
+    }
+    for (auto & c : columns_in_table2)
+        if (std::find(columns_in_table2.begin(), columns_in_table2.end(), c) == columns_in_table2.end())
+            return "Invalid Column!";
+    switch (table1.check_row(table1_conditions)) {
+        case 0:
+            break;
+        case 1:
+            return "Too Many Columns!";
+        case 2:
+            return "Invalid Columns!";
+        default:
+            return "Super Big Mistakes!";
+    }
+    switch (table2.check_row(table2_conditions)) {
+        case 0:
+            break;
+        case 1:
+            return "Too Many Columns!";
+        case 2:
+            return "Invalid Columns!";
+        default:
+            return "Super Big Mistakes!";
+    }
+    std::stringstream result;
+    auto output_table_writer = csv::make_csv_writer(result);
+    std::vector<std::string> all_columns;
+    for (auto & c : columns_in_table1)
+        all_columns.emplace_back(c);
+    for (auto & c : columns_in_table2)
+        all_columns.emplace_back(c);
+    output_table_writer << all_columns;
+    for (auto & row1 : *table1.table_reader) {
+        for (auto & row2 : *table2.table_reader) {
+            if (row1[on_table1_column].get<std::string>() == row2[on_table2_column].get<std::string>()) {
+                bool not_selected = false;
+                for (auto & c : table1_conditions)
+                    if (row1[c.first].get<std::string>() != c.second)
+                        not_selected = true;
+                for (auto & c : table2_conditions)
+                    if (row2[c.first].get<std::string>() != c.second)
+                        not_selected = true;
+                if (!not_selected) {
+                    std::vector<std::string> temp_row(0);
+                    for (auto & h : columns_in_table1)
+                        temp_row.emplace_back(row1[h].get<std::string>());
+                    for (auto & h : columns_in_table2)
+                        temp_row.emplace_back(row2[h].get<std::string>());
+                    output_table_writer << temp_row;
+                }
+            }
+        }
+    }
+    return result.str();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
