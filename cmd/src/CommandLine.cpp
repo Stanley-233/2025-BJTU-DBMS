@@ -30,10 +30,6 @@ void CommandLine::start() {
         if (status == -1) continue;
         if (status == 0) {
             // finish
-            if (result[0] == "EXECUTE") {
-                ReadSqlBatch(result[1]);
-                continue;
-            }
             auto message = _parser.parse(result);
             std::cout << message << std::endl;
             result.clear();
@@ -64,25 +60,9 @@ int CommandLine::tokenize(std::string &str, std::vector<std::string> &result) {
     return ret;
 }
 
-int CommandLine::ReadSqlBatch(std::string& file_name) {
-    int ret = 0;
-    std::ifstream file(file_name);
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open file " << file_name << std::endl;
-        return -2;
-    }
-    std::string line;
-    std::vector<std::string> result;
-    while (std::getline(file, line)) {
-        preProcess(line);
-        auto status = tokenize(line, result);
-        if (status == -1) continue;
-        if (status == 0) {
-            auto message = _parser.parse(result);
-            std::cout << message << std::endl;
-            result.clear();
-        }
-    }
-    file.close();
-    return ret;
+
+int CommandLine::processSQL(const std::string& input, std::vector<std::string>& tokens) {
+    std::string processed = input;
+    if (preProcess(processed) == -1) return -1;  // 预处理（私有方法内部调用）
+    return tokenize(processed, tokens);          // 分词（私有方法内部调用）
 }
