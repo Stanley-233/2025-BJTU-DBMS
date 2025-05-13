@@ -14,9 +14,10 @@ class CommandLine {
 public:
     // 获取单例对象
     static CommandLine& getInstance();
-
+    int processSQL(const std::string& input, std::vector<std::string>& tokens);
     // 开始运行
     void start();
+    Parser& getParser() { return _parser; }
 private:
     CommandLine() {}
 
@@ -31,10 +32,7 @@ private:
 
     // Running
     static inline int tokenize(std::string& str, std::vector<std::string>& result);
-
-    // 批处理
-    inline int ReadSqlBatch(std::string& file_name);
-};
+};   
 
 
 
