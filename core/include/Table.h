@@ -43,10 +43,8 @@ public:
         std::vector<std::string> &);
     friend std::string select_with_join(
         Table & table1, Table & table2,
-        std::vector<std::string> &columns_in_table1,
-        std::vector<std::string> &columns_in_table2,
-        std::unordered_map<std::string, std::string> &table1_conditions,
-        std::unordered_map<std::string, std::string> &table2_conditions,
+        std::vector<std::string> &columns,
+        std::unordered_map<std::string, std::string> &conditions,
         std::string &on_table1_column,
         std::string &on_table2_column);
 };
