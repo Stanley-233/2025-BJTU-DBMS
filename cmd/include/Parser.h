@@ -9,9 +9,13 @@
 #include <string>
 #include <vector>
 
+#include "json.hpp"
+
 class Parser {
     const std::string WIP = "ERROR: Not Implemented.";
 public:
+    std::string _username;
+    nlohmann::json _user_json;
     Parser() = default;
     std::string parse(const std::vector<std::string>& input);
 private:
@@ -30,6 +34,10 @@ private:
     std::string UpdateRecord(const std::vector<std::string>& input);
 
     std::string SelectFromTable(const std::vector<std::string>& input);
+
+    // USER
+    std::string GrantUserPermission(const std::string& username, const std::string& permission);
+    std::string RevokeUserPermission(const std::string& username, const std::string& permission);
 };
 
 

@@ -40,6 +40,8 @@ void CommandLine::start() {
             LOG(INFO) << "Successfully logged as " << username;
             std::cout << "Successfully logged as " << username << std::endl;
             this->_username = username;
+            _parser._username = username;
+            _parser._user_json = users;
             std::cin.clear();
             break;
         }

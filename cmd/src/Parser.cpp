@@ -14,52 +14,132 @@ std::string Parser::parse(const std::vector<std::string> &input) {
     if (input.empty()) return "ERROR: No Command Given.";
     // DATABASE
     if (input[1] == "DATABASE") {
-        if (input[0] == "CREATE") {
-            output = createDatabase(input);
-        } else if (input[0] == "DROP") {
-            output = dropDatabase(input);
-        } else if (input[0] == "USE") {
-            output = useDatabase(input);
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (temp == "ROOT" || temp == "DATABASE") {
+                if (input[0] == "CREATE") {
+                    output = createDatabase(input);
+                    goto RET;
+                }
+                if (input[0] == "DROP") {
+                    output = dropDatabase(input);
+                    goto RET;
+                }
+                if (input[0] == "USE") {
+                    output = useDatabase(input);
+                    goto RET;
+                }
+            }
         }
     }
     // TABLE
     if (input[1] == "TABLE") {
-        if (input[0] == "CREATE") {
-            output = createTable(input);
-        } else if (input[0] == "DROP") {
-            output = dropTable(input);
-        } else if (input[0] == "ALTER") {
-            output = alterTable(input);
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input[0] == "CREATE") {
+                if (temp == "CREATE_TABLE" || temp == "ROOT") {
+                    output = createTable(input);
+                    goto RET;
+                }
+            } else if (input[0] == "DROP") {
+                if (temp == "DROP_TABLE" || temp == "ROOT") {
+                    output = dropTable(input);
+                    goto RET;
+                }
+            } else if (input[0] == "ALTER") {
+                if (temp == "ALTER_TABLE" || temp == "ROOT") {
+                    output = alterTable(input);
+                    goto RET;
+                }
+            }
         }
+        output = "ERROR: Permission denied.";
     }
     if (input[0] == "INSERT") {
-        if (input.size() < 4 || input[1] != "INTO") {
-            output = "ERROR: Invalid syntax.";
-        } else {
-            output = insertIntoTable(input);
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input.size() < 4 || input[1] != "INTO") {
+                output = "ERROR: Invalid syntax.";
+                break;
+            }
+            if (temp == "INSERT" || temp == "ROOT") {
+                output = insertIntoTable(input);
+                goto RET;
+            }
         }
     }
     if (input[0] == "DELETE") {
-        if (input.size() < 3 || input[1] != "FROM") {
-            output = "ERROR: Invalid syntax.";
-        } else {
-            output = DeleteFromTable(input);
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input.size() < 3 || input[1] != "FROM") {
+                output = "ERROR: Invalid syntax.";
+                break;
+            }
+            if (temp == "DELETE" || temp == "ROOT") {
+                output = DeleteFromTable(input);
+                goto RET;
+            }
         }
     }
     if (input[0] == "UPDATE") {
-        if (input.size() < 6 || input[2] != "SET") {
-            output = "ERROR: Invalid syntax.";
-        } else {
-            output = UpdateRecord(input);
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input.size() < 6 || input[2] != "SET") {
+                output = "ERROR: Invalid syntax.";
+                break;
+            }
+            if (temp == "UPDATE" || temp == "ROOT") {
+                output = UpdateRecord(input);
+                goto RET;
+            }
         }
     }
     if (input[0] == "SELECT") {
-        if (input.size() < 4) {
-            output = "ERROR: Invalid syntax.";
-        } else {
-            output = SelectFromTable(input);
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input.size() < 4) {
+                output = "ERROR: Invalid syntax.";
+                break;
+            }
+            if (temp == "SELECT" || temp == "ROOT") {
+                output = SelectFromTable(input);
+                goto RET;
+            }
         }
     }
+    if (input[0] == "GRANT") {
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input.size() < 4 || input[2] != "ON") {
+                output = "ERROR: Invalid syntax.";
+                break;
+            }
+            if (temp == "ROOT") {
+                output = GrantUserPermission(input[3], input[1]);
+                goto RET;
+            }
+        }
+    }
+    if (input[0] == "REVOKE") {
+        for (std::string temp : _user_json[_username]["permissions"]) {
+            if (input.size() < 4 || input[2] != "ON") {
+                output = "ERROR: Invalid syntax.";
+                break;
+            }
+            if (temp == "ROOT") {
+                output = RevokeUserPermission(input[3], input[1]);
+                goto RET;
+            }
+        }
+    }
+    if (input[0] == "CREATE" && input[1] == "USER") {
+        const auto& uname = input[2];
+        const auto& password = input[3];
+        if (_user_json.contains(uname)) {
+            output = "User '" + uname + "' already exists";
+        }
+        _user_json[uname] = {
+            {"password", password},
+            {"permissions", nlohmann::json::array()}  // 初始权限为空
+        };
+        std::ofstream outfile("conf/users.json",std::ios::trunc);
+        outfile << _user_json << std::flush;
+        outfile.close();
+    }
+    RET:
     return output;
 }
 
@@ -222,4 +302,35 @@ std::string Parser::SelectFromTable(const std::vector<std::string> &input) {
         output = _coreProcess.SelectColFromTable(tableName, colNames, conditions);
     }
     return output;
+}
+
+std::string Parser::GrantUserPermission(const std::string &username, const std::string &permission) {
+    if (!_user_json.contains(username)) {
+        return "ERROR: User not exists";
+    }
+    auto& permissions = _user_json[username]["permissions"];
+    if (std::find(permissions.begin(), permissions.end(), permission) != permissions.end()) {
+        return "ERROR: Permission already granted";
+    }
+    permissions.push_back(permission);
+    std::ofstream outfile("conf/users.json",std::ios::trunc);
+    outfile << _user_json << std::flush;
+    outfile.close();
+    return "Permission granted to " + username;
+}
+
+std::string Parser::RevokeUserPermission(const std::string &username, const std::string &permission) {
+    if (!_user_json.contains(username)) {
+        return "ERROR: User not exists";
+    }
+    auto& permissions = _user_json[username]["permissions"];
+    auto it = std::find(permissions.begin(), permissions.end(), permission);
+    if (it == permissions.end()) {
+        return "ERROR: Permission not found.";
+    }
+    permissions.erase(it);
+    std::ofstream outfile("conf/users.json",std::ios::trunc);
+    outfile << _user_json << std::flush;
+    outfile.close();
+    return "Permission revoked from " + username;
 }
