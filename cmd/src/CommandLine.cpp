@@ -10,6 +10,7 @@
 #include <fstream>
 
 #include "easylogging++.h"
+#include "json.hpp"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -19,9 +20,32 @@ CommandLine & CommandLine::getInstance() {
 }
 
 void CommandLine::start() {
+    // Initialize Logger
     el::Configurations conf("conf/log.conf");
     el::Loggers::reconfigureLogger("default", conf);
     el::Loggers::reconfigureAllLoggers(conf);
+
+    // Initialize User
+    std::ifstream i("conf/users.json");
+    nlohmann::json users;
+    i >> users;
+    LOG(INFO) << users;
+
+    std::cout << "Please enter username and password:" << std::endl;
+    std::string username, password;
+    while (true) {
+        std::cin >> username >> password;
+        std::string t = users[username]["password"];
+        if (t == password) {
+            LOG(INFO) << "Successfully logged as " << username;
+            std::cout << "Successfully logged as " << username << std::endl;
+            this->_username = username;
+            std::cin.clear();
+            break;
+        }
+        std::cout << "User " << username << " does not exist or wrong password!" << std::endl;
+    }
+
     std::cout << "Welcome to Data4Sql!" << std::endl;
     std::cout << "--------------------" << std::endl;
     LOG(INFO) << "CommandLine::start()";
@@ -34,6 +58,7 @@ void CommandLine::start() {
         if (preProcess(input) == -1) {
             std::cout << "ERROR: No command Given." << std::endl;
             LOG(ERROR) << "ERROR: No command Given." << std::endl;
+            continue;
         }
         LOG(INFO) << "Received command: " << input;
         status = tokenize(input, result);
@@ -41,12 +66,20 @@ void CommandLine::start() {
         if (status == 0) {
             // finish
             if (result[0] == "EXECUTE") {
-                ReadSqlBatch(result[1]);
+                for (std::string temp : users[this->_username]["permissions"]) {
+                    if (temp == "ROOT") {
+                        ReadSqlBatch(result[1]);
+                        goto NEXT;
+                    }
+                }
+                std::cout << "ERROR: Permission denied." << std::endl;
+                LOG(ERROR) << "ERROR: Permission denied." << std::endl;
                 continue;
             }
             auto message = _parser.parse(result);
             std::cout << message << std::endl;
             LOG(INFO) << message;
+            NEXT:
             result.clear();
         }
     }

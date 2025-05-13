@@ -27,6 +27,8 @@ private:
     // Parser
     Parser _parser;
 
+    std::string _username;
+
     // 预处理(trim)
     static inline int preProcess(std::string& str);
 
