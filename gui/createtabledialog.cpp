@@ -1,4 +1,4 @@
-// createtabledialog.cpp
+﻿// createtabledialog.cpp
 #include "createtabledialog.h"
 #include <QPushButton>
 #include <QLabel>
