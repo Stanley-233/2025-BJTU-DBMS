@@ -13,6 +13,7 @@ aux_source_directory(./../core/src/ SOURCE_CORE)
 add_executable(
         data4sql
         main.cpp
+        src/easylogging++.cpp
         # cmd
         ${SOURCE_SRC}
         # core

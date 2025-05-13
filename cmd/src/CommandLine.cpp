@@ -9,14 +9,22 @@
 #include <sstream>
 #include <fstream>
 
+#include "easylogging++.h"
+
+INITIALIZE_EASYLOGGINGPP
+
 CommandLine & CommandLine::getInstance() {
     static CommandLine instance;
     return instance;
 }
 
 void CommandLine::start() {
+    el::Configurations conf("conf/log.conf");
+    el::Loggers::reconfigureLogger("default", conf);
+    el::Loggers::reconfigureAllLoggers(conf);
     std::cout << "Welcome to Data4Sql!" << std::endl;
     std::cout << "--------------------" << std::endl;
+    LOG(INFO) << "CommandLine::start()";
     std::string input;
     int status = 0;
     std::vector<std::string> result;
@@ -25,13 +33,16 @@ void CommandLine::start() {
         std::getline(std::cin, input);
         if (preProcess(input) == -1) {
             std::cout << "ERROR: No command Given." << std::endl;
+            LOG(ERROR) << "ERROR: No command Given." << std::endl;
         }
+        LOG(INFO) << "Received command: " << input;
         status = tokenize(input, result);
         if (status == -1) continue;
         if (status == 0) {
             // finish
             auto message = _parser.parse(result);
             std::cout << message << std::endl;
+            LOG(INFO) << message;
             result.clear();
         }
     }
@@ -63,6 +74,6 @@ int CommandLine::tokenize(std::string &str, std::vector<std::string> &result) {
 
 int CommandLine::processSQL(const std::string& input, std::vector<std::string>& tokens) {
     std::string processed = input;
-    if (preProcess(processed) == -1) return -1;  // 预处理（私有方法内部调用）
-    return tokenize(processed, tokens);          // 分词（私有方法内部调用）
+    if (preProcess(processed) == -1) return -1;
+    return tokenize(processed, tokens);
 }
