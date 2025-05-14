@@ -198,7 +198,6 @@ int Table::delete_rows(std::unordered_map<std::string, std::string> & conditions
         for (auto & c : conditions)
             if (row[c.first].get<std::string>() != c.second) {
                 not_deleted = true;
-                ++rows_deleted;
             }
         if (not_deleted) {
             std::vector<std::string> temp_row(0);
