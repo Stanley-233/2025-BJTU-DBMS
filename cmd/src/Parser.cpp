@@ -139,6 +139,12 @@ std::string Parser::parse(const std::vector<std::string> &input) {
         outfile << _user_json << std::flush;
         outfile.close();
     }
+    if (input[0] == "ROLLBACK") {
+        _coreProcess.Rollback();
+    }
+    if (input[0] == "COMMIT") {
+        _coreProcess.Commit();
+    }
     RET:
     return output;
 }

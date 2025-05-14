@@ -223,7 +223,9 @@ std::string CoreProcess::SelectFromTabelJoin(const std::string &table_name, std:
 }
 
 std::string CoreProcess::Commit() {
+    throw std::exception("TODO");
 }
 
 std::string CoreProcess::Rollback() {
+    throw std::exception("TODO");
 }
