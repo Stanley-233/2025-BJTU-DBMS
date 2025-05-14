@@ -5,17 +5,127 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
 #include <QTextStream>
+#include <QFormLayout>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    refreshDatabaseTree();
+
+    while(true) {
+        // 创建并显示登录对话框
+        QDialog loginDialog(this);
+        loginDialog.setWindowTitle("登录");
+
+        QFormLayout form(&loginDialog);
+
+        QLineEdit usernameEdit;
+        QLineEdit passwordEdit;
+        passwordEdit.setEchoMode(QLineEdit::Password);
+
+        form.addRow("用户名:", &usernameEdit);
+        form.addRow("密码:", &passwordEdit);
+
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                   Qt::Horizontal, &loginDialog);
+        form.addRow(&buttonBox);
+
+        std::string m_username, m_password;
+
+        QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+            m_username = usernameEdit.text().toStdString();
+            m_password = passwordEdit.text().toStdString();
+            loginDialog.accept();
+        });
+        QObject::connect(&buttonBox, &QDialogButtonBox::rejected, [&]() {
+            QMessageBox::warning(this, "警告", "未给出用户名，程序退出");
+            QCoreApplication::quit(); // 如果取消登录则退出程序
+        });
+        bool flag = CommandLine::getInstance().Login(m_username, m_password);
+        if (flag) break;
+        QMessageBox::warning(this, "警告", "用户不存在或密码错误!");
+    }
 
     // Connect signals
     connect(ui->actionCreateTable, &QAction::triggered, this, &MainWindow::onCreateTable);
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::onClearSql);
     connect(ui->loadScriptButton, &QPushButton::clicked, this, &MainWindow::onLoadScript);
-    // connect(ui->executeButton, &QPushButton::clicked, this, &MainWindow::on_executeButton_clicked);
+    connect(ui->databaseTreeWidget, &QTreeWidget::itemClicked,
+            this, &MainWindow::onDatabaseItemClicked);
+    connect(ui->databaseTreeWidget, &QTreeWidget::itemExpanded,
+            [this](QTreeWidgetItem *item) {
+                if (item->data(0, Qt::UserRole) == "database") {
+                    loadTablesForDatabase(item, item->text(0));
+                }
+            });
+
 }
+
+void MainWindow::onDatabaseItemClicked(QTreeWidgetItem *item, int column) {
+    // 处理点击事件的代码
+    if (item->data(0, Qt::UserRole) == "table") {
+        QString dbName = item->parent()->text(0);
+        QString tableName = item->text(0);
+        qDebug() << "Selected table:" << dbName << "." << tableName;
+    }
+}
+
+void MainWindow::refreshDatabaseTree() {
+    ui->databaseTreeWidget->clear();
+
+    QDir systemDir("system");
+    if (!systemDir.exists()) {
+        systemDir.mkpath(".");
+        return;
+    }
+
+    // 获取所有数据库（目录）
+    QStringList databases = systemDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    foreach (const QString &dbName, databases) {
+        QTreeWidgetItem *dbItem = new QTreeWidgetItem(ui->databaseTreeWidget);
+        dbItem->setText(0, dbName);
+        dbItem->setIcon(0, QIcon(":/icons/database.png"));
+        dbItem->setData(0, Qt::UserRole, "database");
+
+        // 延迟加载表结构
+        dbItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    }
+}
+
+void MainWindow::loadTablesForDatabase(QTreeWidgetItem *dbItem, const QString& dbName) {
+    dbItem->takeChildren();
+
+    QDir dbDir(QString("system/%1").arg(dbName));
+    QStringList tables;
+
+    // 获取所有可能的表文件
+    QStringList files = dbDir.entryList({"*.csv", "*.header"}, QDir::Files);
+    QSet<QString> validTables;
+
+    foreach (const QString &file, files) {
+        QString baseName = QFileInfo(file).completeBaseName();
+        // 检查是否同时存在两个文件
+        if (dbDir.exists(baseName + ".csv") &&
+            dbDir.exists(baseName + ".header")) {
+            validTables.insert(baseName);
+        }
+    }
+
+    foreach (const QString &table, validTables) {
+        QTreeWidgetItem *tableItem = new QTreeWidgetItem(dbItem);
+        tableItem->setText(0, table);
+        tableItem->setIcon(0, QIcon(":/icons/table.png"));
+        tableItem->setData(0, Qt::UserRole, "table");
+    }
+}
+
+
+
+
 
 void MainWindow::onCreateTable() {
     CreateTableDialog dlg;
@@ -83,6 +193,7 @@ void MainWindow::on_executeButton_clicked() {
          else {
             QMessageBox::information(this, "Result", QString::fromStdString(resultStr));
         }
+         refreshDatabaseTree();
     }
 }
 

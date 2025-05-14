@@ -18,6 +18,9 @@ public:
     // 开始运行
     void start();
     Parser& getParser() { return _parser; }
+    // 登录
+    bool Login(std::string& username, std::string& password);
+
 private:
     CommandLine() {}
 
