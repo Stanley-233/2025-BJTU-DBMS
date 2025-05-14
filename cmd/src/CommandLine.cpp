@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by stanl on 25-4-14.
 //
 
@@ -51,6 +51,7 @@ void CommandLine::start() {
     std::cout << "Welcome to Data4Sql!" << std::endl;
     std::cout << "--------------------" << std::endl;
     LOG(INFO) << "CommandLine::start()";
+    std::string message;
     std::string input;
     int status = 0;
     std::vector<std::string> result;
@@ -78,7 +79,7 @@ void CommandLine::start() {
                 LOG(ERROR) << "ERROR: Permission denied." << std::endl;
                 continue;
             }
-            auto message = _parser.parse(result);
+            message = _parser.parse(result);
             std::cout << message << std::endl;
             LOG(INFO) << message;
             NEXT:

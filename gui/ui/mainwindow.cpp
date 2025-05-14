@@ -8,16 +8,51 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QFormLayout>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     refreshDatabaseTree();
 
+    while(true) {
+        // 创建并显示登录对话框
+        QDialog loginDialog(this);
+        loginDialog.setWindowTitle("登录");
+
+        QFormLayout form(&loginDialog);
+
+        QLineEdit usernameEdit;
+        QLineEdit passwordEdit;
+        passwordEdit.setEchoMode(QLineEdit::Password);
+
+        form.addRow("用户名:", &usernameEdit);
+        form.addRow("密码:", &passwordEdit);
+
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                   Qt::Horizontal, &loginDialog);
+        form.addRow(&buttonBox);
+
+        std::string m_username, m_password;
+
+        QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+            m_username = usernameEdit.text().toStdString();
+            m_password = passwordEdit.text().toStdString();
+            loginDialog.accept();
+        });
+        QObject::connect(&buttonBox, &QDialogButtonBox::rejected, [&]() {
+            QMessageBox::warning(this, "警告", "未给出用户名，程序退出");
+            QCoreApplication::quit(); // 如果取消登录则退出程序
+        });
+        bool flag = CommandLine::getInstance().Login(m_username, m_password);
+        if (flag) break;
+        QMessageBox::warning(this, "警告", "用户不存在或密码错误!");
+    }
+
     // Connect signals
     connect(ui->actionCreateTable, &QAction::triggered, this, &MainWindow::onCreateTable);
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::onClearSql);
     connect(ui->loadScriptButton, &QPushButton::clicked, this, &MainWindow::onLoadScript);
-    connect(ui->executeButton, &QPushButton::clicked, this, &MainWindow::on_executeButton_clicked);
     connect(ui->databaseTreeWidget, &QTreeWidget::itemClicked,
             this, &MainWindow::onDatabaseItemClicked);
     connect(ui->databaseTreeWidget, &QTreeWidget::itemExpanded,
