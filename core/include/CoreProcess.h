@@ -56,8 +56,8 @@ public:
         std::string& other_join_column_name);
 
     // Commit
-    std::string Commit();
-    std::string Rollback();
+    std::string Commit(std::string& table_name);
+    std::string Rollback(std::string& table_name);
 
 private:
     std::string currentDbName;

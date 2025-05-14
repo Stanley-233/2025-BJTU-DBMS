@@ -140,10 +140,10 @@ std::string Parser::parse(const std::vector<std::string> &input) {
         outfile.close();
     }
     if (input[0] == "ROLLBACK") {
-        _coreProcess.Rollback();
+        _coreProcess.Rollback(input[1]);
     }
     if (input[0] == "COMMIT") {
-        _coreProcess.Commit();
+        _coreProcess.Commit(input[1]);
     }
     RET:
     return output;
