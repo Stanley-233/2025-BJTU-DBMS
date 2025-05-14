@@ -162,7 +162,7 @@ std::string CoreProcess::DeleteFromTable(const std::string &table_name,
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    int ret = t.delete_rows(conditions);
+    std::string ret = std::to_string(t.delete_rows(conditions));
     return ret + " records deleted from " + table_name + " .";
 }
 
@@ -175,7 +175,7 @@ std::string CoreProcess::UpdateTableRecord(const std::string &table_name,
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    int ret = t.update_rows(col_values, conditions);
+    std::string ret = std::to_string(t.update_rows(col_values, conditions));
     return ret + " records updated from " + table_name + " .";
 }
 
