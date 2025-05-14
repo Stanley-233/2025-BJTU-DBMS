@@ -1,0 +1,10 @@
+CREATE DATABASE join_db;
+USE DATABASE join_db;
+CREATE TABLE student Sno INT Sname TEXT age INT;
+INSERT INTO student Sno Sname age VALUES 23301171 赵励恒 20;
+INSERT INTO student Sno Sname age VALUES 23301161 马展飞 20;
+CREATE TABLE grade Sno INT score INT;
+INSERT INTO grade Sno score VALUES 23301171 88;
+INSERT INTO grade Sno score VALUES 23301161 81;
+SELECT Sno Sname score FROM student JOIN grade ON Sno = Sno;
+SELECT Sno Sname score FROM student WHERE Sno = 23301171 JOIN grade ON Sno = Sno;

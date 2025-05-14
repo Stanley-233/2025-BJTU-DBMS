@@ -387,7 +387,7 @@ std::string select_with_join(
                 .header_row(0);
     table2.table_reader = new csv::CSVReader(table2.file_name, table_format);
     delete table1.table_reader;
-    table2.table_reader = new csv::CSVReader(table2.file_name, table_format);
+    table1.table_reader = new csv::CSVReader(table1.file_name, table_format);
     return result.str();
 }
 

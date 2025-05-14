@@ -205,16 +205,25 @@ std::string CoreProcess::SelectColFromTable(const std::string &table_name, std::
 }
 
 std::string CoreProcess::SelectFromTabelJoin(const std::string &table_name, std::vector<std::string> &columns,
-    std::unordered_map<std::string, std::string> &conditions, const std::string &join_table_name,
-    const std::string &this_join_column_name, const std::string &other_join_column_name) {
+    std::unordered_map<std::string, std::string> &conditions, const std::string &join_table_name,std::string &this_join_column_name, std::string &other_join_column_name) {
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
-    auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
-    if (!fs::exists(path + ".csv")) {
+    auto path1 = SYS_PATH + '/' + currentDbName + '/' + table_name;
+    if (!fs::exists(path1 + ".csv")) {
         return "ERROR: Table not exist.";
     }
-    // TODO
-    Table t(path);
+    Table t1(path1);
+    auto path2 = SYS_PATH + '/' + currentDbName + '/' + join_table_name;
+    if (!fs::exists(path2 + ".csv")) {
+        return "ERROR: Table not exist.";
+    }
+    Table t2(path2);
     std::vector<std::string> rows(0);
-    std::string output = t.select_rows(conditions, rows);
+    std::string output = select_with_join(t1,t2,columns,conditions,this_join_column_name,other_join_column_name);
     return output;
+}
+
+std::string CoreProcess::Commit() {
+}
+
+std::string CoreProcess::Rollback() {
 }

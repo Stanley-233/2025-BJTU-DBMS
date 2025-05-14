@@ -52,8 +52,12 @@ public:
         std::vector<std::string> &columns,
         std::unordered_map<std::string, std::string> &conditions,
         const std::string& join_table_name,
-        const std::string& this_join_column_name,
-        const std::string& other_join_column_name);
+        std::string& this_join_column_name,
+        std::string& other_join_column_name);
+
+    // Commit
+    std::string Commit();
+    std::string Rollback();
 
 private:
     std::string currentDbName;

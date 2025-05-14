@@ -271,7 +271,11 @@ std::string Parser::SelectFromTable(const std::vector<std::string> &input) {
     const auto& tableName = input[++i];
     std::unordered_map<std::string, std::string> conditions;
     if (input.size() > 4) {
-        if (input[++i] != "WHERE") return "ERROR: Invalid syntax.";
+        ++i;
+        if (input[i] != "WHERE") {
+            if (input[i] == "JOIN") goto JOIN_NEXT;
+            return "ERROR: Invalid syntax.";
+        }
         ++i;
         for (; i < input.size(); i+=3) {
             if (input[i] == "JOIN") break;
@@ -281,6 +285,7 @@ std::string Parser::SelectFromTable(const std::vector<std::string> &input) {
         if (colNames.empty()) return "ERROR: Invalid syntax.";
     }
     // JOIN tablename ON Col1 = Col2
+    JOIN_NEXT:
     ++i;
     std::string join_table_name, this_col_name, other_col_name;
     if (i < input.size()) {

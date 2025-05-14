@@ -16,10 +16,10 @@ class Parser {
 public:
     std::string _username;
     nlohmann::json _user_json;
+    CoreProcess _coreProcess = CoreProcess::getInstance();
     Parser() = default;
     std::string parse(const std::vector<std::string>& input);
 private:
-    CoreProcess _coreProcess = CoreProcess::getInstance();
     // DATABASE
     std::string createDatabase(const std::vector<std::string>& input);
     std::string dropDatabase(const std::vector<std::string>& input);
