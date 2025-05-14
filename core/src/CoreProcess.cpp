@@ -175,7 +175,7 @@ std::string CoreProcess::UpdateTableRecord(const std::string &table_name,
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    int ret = 0;
+    int ret = t.update_rows(col_values, conditions);
     return ret + " records updated from " + table_name + " .";
 }
 

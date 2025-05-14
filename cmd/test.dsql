@@ -1,8 +1,12 @@
 CREATE DATABASE test_db;
 USE DATABASE test_db;
 CREATE TABLE student name TEXT age INT;
-INSERT INTO student name age VALUES 赵励恒 20;
+INSERT INTO student name age VALUES Stanley 20;
 INSERT INTO student name age VALUES 马展飞 20;
 SELECT * FROM student;
 SELECT name FROM student;
-SELECT * FROM student WHERE name = 赵励恒;
+SELECT * FROM student WHERE name = Stanley;
+DELETE FROM student WHERE name = 马展飞;
+SELECT * FROM student;
+UPDATE student SET name = 赵励恒 WHERE name = Stanley;
+SELECT * FROM student;

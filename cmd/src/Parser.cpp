@@ -233,7 +233,7 @@ std::string Parser::DeleteFromTable(const std::vector<std::string> &input) {
     std::unordered_map<std::string, std::string> conditions;
     if (input.size() > 3) {
         if (input[3] != "WHERE" || input.size() < 7 || (input.size()-4)%3!=0) return "ERROR: Invalid syntax.";
-        for (int i = 4; i < input.size(); i++) {
+        for (int i = 4; i < input.size(); i+=3) {
             if (input[i+1] != "=") return "ERROR: Invalid syntax.";
             conditions.emplace(input[i], input[i+2]);
         }
@@ -243,7 +243,7 @@ std::string Parser::DeleteFromTable(const std::vector<std::string> &input) {
 }
 
 std::string Parser::UpdateRecord(const std::vector<std::string> &input) {
-    const auto& tableName = input[2];
+    const auto& tableName = input[1];
     std::unordered_map<std::string, std::string> values;
     std::unordered_map<std::string, std::string> conditions;
     int i = 3;
