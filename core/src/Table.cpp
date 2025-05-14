@@ -53,8 +53,8 @@ Table::Table(const std::string &file_name) {
 }
 
 Table::~Table() {
-    if (!table_reader)
-        delete table_reader;
+    delete table_reader;
+    table_stream.close();
 }
 
 void Table::create_table(  std::string path,

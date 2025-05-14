@@ -257,7 +257,7 @@ std::string Parser::UpdateRecord(const std::vector<std::string> &input) {
         if (input[i+1] != "=") return "ERROR: Invalid syntax.";
         conditions.emplace(input[i], input[i+2]);
     }
-    std::string output = _coreProcess.UpdateTableRecord(tableName, values, conditions);
+    std::string output = _coreProcess.UpdateTableRecord(tableName, conditions, values);
     return output;
 }
 
