@@ -276,7 +276,7 @@ int Table::update_rows( std::unordered_map<std::string, std::string> &conditions
 
 std::string Table::select_rows(std::unordered_map<std::string, std::string> &conditions,
                                             std::vector<std::string> &selected_columns) {
-    if (selected_columns.size() == 0)
+    if (selected_columns.empty())
         selected_columns = table_headers;
     else if (selected_columns.size() > table_headers.size()) {
         return "Too Many Columns!";
@@ -309,6 +309,12 @@ std::string Table::select_rows(std::unordered_map<std::string, std::string> &con
             output_table_writer << temp_row;
         }
     }
+    delete table_reader;
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(file_name, table_format);
     return result.str();
 }
 
@@ -368,7 +374,22 @@ std::string select_with_join(
                 }
             }
         }
+        delete table2.table_reader;
+        csv::CSVFormat table_format;
+        table_format.delimiter(',')
+                    .quote('"')
+                    .header_row(0);
+        table2.table_reader = new csv::CSVReader(table2.file_name, table_format);
     }
+    delete table2.table_reader;
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table2.table_reader = new csv::CSVReader(table2.file_name, table_format);
+    delete table1.table_reader;
+    table2.table_reader = new csv::CSVReader(table2.file_name, table_format);
+    return result.str();
 }
 
 
