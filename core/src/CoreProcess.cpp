@@ -222,22 +222,22 @@ std::string CoreProcess::SelectFromTabelJoin(const std::string &table_name, std:
     return output;
 }
 
-std::string CoreProcess::Commit(std::string& table_name) {
+std::string CoreProcess::Commit(const std::string& table_name) {
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
     auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
     if (!fs::exists(path + ".csv")) {
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    throw std::exception("TODO");
+    //throw std::exception("TODO");
 }
 
-std::string CoreProcess::Rollback(std::string& table_name) {
+std::string CoreProcess::Rollback(const std::string& table_name) {
     if (currentDbName.empty()) return "ERROR: Require Database. Use \"USE DATABASE db_name\" first.";
     auto path = SYS_PATH + '/' + currentDbName + '/' + table_name;
     if (!fs::exists(path + ".csv")) {
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    throw std::exception("TODO");
+    //throw std::exception("TODO");
 }

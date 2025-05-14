@@ -27,7 +27,7 @@ int main() {
     std::unordered_map<std::string, std::string> temp_condition{{"Email", "Mzf"}};
     t2.insert_row(temp_row3);
     t2.insert_row(temp_row3);
-    std::vector<std::string> temp_header = {"Author", "Name", "Money"};
+    std::vector<std::string> temp_header = {"Author"};
     std::string temp_on = "Name";
     std::cout << select_with_join(t1, t2, temp_header, temp_condition, temp_on, temp_on);
 }

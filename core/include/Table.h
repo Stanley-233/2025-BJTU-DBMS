@@ -47,6 +47,8 @@ public:
         std::unordered_map<std::string, std::string> &conditions,
         std::string &on_table1_column,
         std::string &on_table2_column);
+    void commit();
+    void rollback();
 };
 
 

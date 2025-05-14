@@ -317,6 +317,35 @@ std::string Table::select_rows(std::unordered_map<std::string, std::string> &con
     return result.str();
 }
 
+void Table::commit() {
+    std::filesystem::path not_to_be(file_name);
+    not_to_be.replace_extension(std::filesystem::path(".del"));
+    if (exists(not_to_be))
+        remove(not_to_be);
+    not_to_be.replace_extension(std::filesystem::path(".hdl"));
+    if (exists(not_to_be))
+        remove(not_to_be);
+}
+
+void Table::rollback() {
+    std::filesystem::path origin_path(file_name), to_be(file_name);
+    to_be.replace_extension(std::filesystem::path(".del"));
+    if (exists(to_be)) {
+        if (exists(origin_path)) {
+            delete table_reader;
+            remove(origin_path);
+        }
+        rename(to_be, origin_path);
+    }
+    origin_path.replace_extension(std::filesystem::path(".header"));
+    to_be.replace_extension(std::filesystem::path(".hdl"));
+    if (exists(to_be)) {
+        if (exists(origin_path))
+            remove(origin_path);
+        rename(to_be, origin_path);
+    }
+}
+
 std::string select_with_join(
     Table &table1, Table &table2,
     std::vector<std::string> &selected_columns,
