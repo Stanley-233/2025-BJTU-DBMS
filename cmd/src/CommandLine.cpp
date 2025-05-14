@@ -30,6 +30,7 @@ void CommandLine::start() {
     nlohmann::json users;
     i >> users;
     LOG(INFO) << users;
+    i.close();
 
     std::cout << "Please enter username and password:" << std::endl;
     std::string username, password;
@@ -140,3 +141,22 @@ int CommandLine::ReadSqlBatch(std::string& file_name) {
     file.close();
     return ret;
 }
+
+auto CommandLine::Login(std::string &username, std::string &password) -> bool {
+    std::ifstream i("conf/users.json");
+    nlohmann::json temp;
+    i >> temp;
+    i.close();
+    LOG(INFO) << "Attempted username: " << username << " Password: " << password;
+
+    std::string t = temp[username]["password"];
+    if (t == password) {
+        LOG(INFO) << "Successfully logged as " << username;
+        this->_username = username;
+        _parser._username = username;
+        _parser._user_json = temp;
+        return true;
+    }
+    return false;
+}
+

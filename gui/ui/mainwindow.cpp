@@ -15,38 +15,43 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     refreshDatabaseTree();
 
-    while(true) {
-        // 创建并显示登录对话框
-        QDialog loginDialog(this);
-        loginDialog.setWindowTitle("登录");
+    // 创建并显示登录对话框
+    std::string m_username, m_password;
+    QDialog loginDialog(this);
+    loginDialog.setWindowTitle("登录");
 
-        QFormLayout form(&loginDialog);
+    QFormLayout form(&loginDialog);
 
-        QLineEdit usernameEdit;
-        QLineEdit passwordEdit;
-        passwordEdit.setEchoMode(QLineEdit::Password);
+    QLineEdit usernameEdit;
+    QLineEdit passwordEdit;
+    passwordEdit.setEchoMode(QLineEdit::Password);
 
-        form.addRow("用户名:", &usernameEdit);
-        form.addRow("密码:", &passwordEdit);
+    form.addRow("用户名:", &usernameEdit);
+    form.addRow("密码:", &passwordEdit);
 
-        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                                   Qt::Horizontal, &loginDialog);
-        form.addRow(&buttonBox);
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                               Qt::Horizontal, &loginDialog);
+    form.addRow(&buttonBox);
 
-        std::string m_username, m_password;
+    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+        m_username = usernameEdit.text().toStdString();
+        m_password = passwordEdit.text().toStdString();
+        loginDialog.accept();
+    });
+    QObject::connect(&buttonBox, &QDialogButtonBox::rejected, [&]() {
+        QCoreApplication::quit(); // 如果取消登录则退出程序
+    });
 
-        QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
-            m_username = usernameEdit.text().toStdString();
-            m_password = passwordEdit.text().toStdString();
-            loginDialog.accept();
-        });
-        QObject::connect(&buttonBox, &QDialogButtonBox::rejected, [&]() {
-            QMessageBox::warning(this, "警告", "未给出用户名，程序退出");
-            QCoreApplication::quit(); // 如果取消登录则退出程序
-        });
-        bool flag = CommandLine::getInstance().Login(m_username, m_password);
-        if (flag) break;
-        QMessageBox::warning(this, "警告", "用户不存在或密码错误!");
+    if (loginDialog.exec() != QDialog::Accepted) {
+        return; // 登录取消，不再继续初始化
+    }
+
+    auto flag = CommandLine::getInstance().Login(m_username, m_password);
+    if (flag) {
+        QMessageBox::information(this, "信息", "登陆成功");
+    } else {
+        QMessageBox::warning(this, "警告", "登陆失败，程序退出");
+        QCoreApplication::quit();
     }
 
     // Connect signals
