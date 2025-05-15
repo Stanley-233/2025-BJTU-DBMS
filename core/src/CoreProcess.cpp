@@ -229,7 +229,8 @@ std::string CoreProcess::Commit(const std::string& table_name) {
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    //throw std::exception("TODO");
+    t.commit();
+    return "Successfully committed.";
 }
 
 std::string CoreProcess::Rollback(const std::string& table_name) {
@@ -239,5 +240,6 @@ std::string CoreProcess::Rollback(const std::string& table_name) {
         return "ERROR: Table not exist.";
     }
     Table t(path);
-    //throw std::exception("TODO");
+    t.rollback();
+    return "Successfully rollbacked.";
 }
