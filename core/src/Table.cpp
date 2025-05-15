@@ -113,6 +113,7 @@ void Table::alter_table_drop_column(const std::string & column_name) {
     std::filesystem::rename(final_path, origin_path);
     std::ofstream t_writer(final_path, std::ios::trunc);
     auto final_writer = csv::make_csv_writer(t_writer);
+    final_writer << table_headers;
     for (auto & row : *table_reader) {
         for (int i = 0; i < table_headers.size(); i++)
             temp_row[i] = row[table_headers[i]].get<std::string>();
@@ -133,51 +134,134 @@ void Table::alter_table_drop_column(const std::string & column_name) {
 }
 
 void Table::alter_table_add_column(const std::string & column_name, int type) {
+    std::filesystem::path origin_path(this->file_name), final_path(origin_path);
+    origin_path.replace_extension(std::filesystem::path(".header"));
+    final_path.replace_extension(".tmp");
+    std::ofstream temp_writer(final_path, std::ios::trunc);
+    auto header_creator = csv::make_csv_writer(temp_writer);
     table_headers.emplace_back(column_name);
     type_getter.emplace(column_name, type);
-    std::filesystem::path table_path(this->file_name);
-    table_path.replace_extension(std::filesystem::path(".header"));
-    std::ofstream header_stream(table_path, std::ios::trunc);
-    auto header_writer = csv::make_csv_writer(header_stream);
-    header_writer << table_headers;
-    std::vector<int> column_types(0);
-    for (auto && i : table_headers)
-        column_types.emplace_back(type_getter[i]);
-    header_writer << column_types;
-    header_stream.close();
+    header_creator << table_headers;
+    std::vector<std::string> temp_row(0);
+    for (const auto & i : table_headers)
+        temp_row.emplace_back(std::to_string(type_getter[i]));
+    header_creator << temp_row;
+    temp_writer.close();
+    final_path.replace_extension(".hdl");
+    std::filesystem::rename(origin_path, final_path);
+    final_path.replace_extension(".tmp");
+    std::filesystem::rename(final_path, origin_path);
+    std::ofstream t_writer(final_path, std::ios::trunc);
+    auto final_writer = csv::make_csv_writer(t_writer);
+    final_writer << table_headers;
+    for (auto & row : *table_reader) {
+        for (int i = 0; i < table_headers.size(); i++) {
+            if (table_headers[i] != column_name)
+                temp_row[i] = row[table_headers[i]].get<std::string>();
+            else
+                temp_row[i] = "%NULL%";
+        }
+        final_writer << temp_row;
+    }
+    t_writer.close();
+    delete table_reader;
+    origin_path.replace_extension(".csv");
+    final_path.replace_extension(".del");
+    std::filesystem::rename(origin_path, final_path);
+    final_path.replace_extension(".tmp");
+    std::filesystem::rename(final_path, origin_path);
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(this->file_name, table_format);
 }
 
 void Table::alter_table_rename_column(const std::string &oldname, const std::string &newname) {
-    for (auto & i : table_headers)
-        if (i == oldname)
-            i = newname;
-    int temp = type_getter[oldname];
-    type_getter.erase(oldname);
-    type_getter.emplace(newname, temp);
-    std::filesystem::path table_path(this->file_name);
-    table_path.replace_extension(std::filesystem::path(".header"));
-    std::ofstream header_stream(table_path, std::ios::trunc);
-    auto header_writer = csv::make_csv_writer(header_stream);
-    header_writer << table_headers;
-    std::vector<int> column_types(0);
-    for (auto && i : table_headers)
-        column_types.emplace_back(type_getter[i]);
-    header_writer << column_types;
-    header_stream.close();
+    std::filesystem::path origin_path(this->file_name), final_path(origin_path);
+    origin_path.replace_extension(std::filesystem::path(".header"));
+    final_path.replace_extension(".tmp");
+    std::ofstream temp_writer(final_path, std::ios::trunc);
+    auto header_creator = csv::make_csv_writer(temp_writer);
+    *find(table_headers.begin(), table_headers.end(), oldname) = newname;
+    type_getter.emplace(newname, type_getter[oldname]);
+    type_getter.erase(type_getter.find(oldname));
+    header_creator << table_headers;
+    std::vector<std::string> temp_row(0);
+    for (const auto & i : table_headers)
+        temp_row.emplace_back(std::to_string(type_getter[i]));
+    header_creator << temp_row;
+    temp_writer.close();
+    final_path.replace_extension(".hdl");
+    std::filesystem::rename(origin_path, final_path);
+    final_path.replace_extension(".tmp");
+    std::filesystem::rename(final_path, origin_path);
+    std::ofstream t_writer(final_path, std::ios::trunc);
+    auto final_writer = csv::make_csv_writer(t_writer);
+    final_writer << table_headers;
+    std::vector<std::string> temp_header = table_headers;
+    *find(temp_header.begin(), temp_header.end(), newname) = oldname;
+    for (auto & row : *table_reader) {
+        for (int i = 0; i < table_headers.size(); i++) {
+            temp_row[i] = row[temp_header[i]].get<std::string>();
+        }
+        final_writer << temp_row;
+    }
+    t_writer.close();
+    delete table_reader;
+    origin_path.replace_extension(".csv");
+    final_path.replace_extension(".del");
+    std::filesystem::rename(origin_path, final_path);
+    final_path.replace_extension(".tmp");
+    std::filesystem::rename(final_path, origin_path);
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(this->file_name, table_format);
 }
 
 void Table::alter_table_modify(const std::string &column_name, const int type) {
-    type_getter[column_name] = type;
-    std::filesystem::path table_path(this->file_name);
-    table_path.replace_extension(std::filesystem::path(".header"));
-    std::ofstream header_stream(table_path, std::ios::trunc);
-    auto header_writer = csv::make_csv_writer(header_stream);
-    header_writer << table_headers;
-    std::vector<int> column_types(0);
-    for (auto && i : table_headers)
-        column_types.emplace_back(type_getter[i]);
-    header_writer << column_types;
-    header_stream.close();
+    std::filesystem::path origin_path(this->file_name), final_path(origin_path);
+    origin_path.replace_extension(std::filesystem::path(".header"));
+    final_path.replace_extension(".tmp");
+    std::ofstream temp_writer(final_path, std::ios::trunc);
+    auto header_creator = csv::make_csv_writer(temp_writer);
+    type_getter.insert_or_assign(column_name, type);
+    header_creator << table_headers;
+    std::vector<std::string> temp_row(0);
+    for (const auto & i : table_headers)
+        temp_row.emplace_back(std::to_string(type_getter[i]));
+    header_creator << temp_row;
+    temp_writer.close();
+    final_path.replace_extension(".hdl");
+    std::filesystem::rename(origin_path, final_path);
+    final_path.replace_extension(".tmp");
+    std::filesystem::rename(final_path, origin_path);
+    std::ofstream t_writer(final_path, std::ios::trunc);
+    auto final_writer = csv::make_csv_writer(t_writer);
+    final_writer << table_headers;
+    for (auto & row : *table_reader) {
+        for (int i = 0; i < table_headers.size(); i++) {
+            if (table_headers[i] != column_name)
+                temp_row[i] = row[table_headers[i]].get<std::string>();
+            else
+                temp_row[i] = "%NULL%";
+        }
+        final_writer << temp_row;
+    }
+    t_writer.close();
+    delete table_reader;
+    origin_path.replace_extension(".csv");
+    final_path.replace_extension(".del");
+    std::filesystem::rename(origin_path, final_path);
+    final_path.replace_extension(".tmp");
+    std::filesystem::rename(final_path, origin_path);
+    csv::CSVFormat table_format;
+    table_format.delimiter(',')
+                .quote('"')
+                .header_row(0);
+    table_reader = new csv::CSVReader(this->file_name, table_format);
 }
 
 void Table::alter_table_rename_table(const std::string & new_name) {

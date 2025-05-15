@@ -17,5 +17,6 @@ int main() {
     t1.insert_row(temp_row2);
     t1.insert_row(temp_row2);
     t1.insert_row(temp_row2);
-    t1.alter_table_drop_column("Name");
+    t1.alter_table_modify("Name", 1);
+    t1.insert_row(temp_row1);
 }
