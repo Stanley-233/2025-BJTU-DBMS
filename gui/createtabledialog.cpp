@@ -44,15 +44,11 @@ void CreateTableDialog::addFieldRow() {
 
     QLineEdit *nameEdit = new QLineEdit();
     QComboBox *typeCombo = new QComboBox();
-    typeCombo->addItems({"INTEGER", "TEXT", "REAL", "BLOB"});
-    QCheckBox *pkCheck = new QCheckBox("PK");
-    QCheckBox *nnCheck = new QCheckBox("NN");
+    typeCombo->addItems({"INTEGER", "TEXT", "DECIMAL"});
     QPushButton *delBtn = new QPushButton("Delete");
 
     rowLayout->addWidget(nameEdit);
     rowLayout->addWidget(typeCombo);
-    rowLayout->addWidget(pkCheck);
-    rowLayout->addWidget(nnCheck);
     rowLayout->addWidget(delBtn);
 
     connect(delBtn, &QPushButton::clicked, [fieldRow](){
@@ -71,21 +67,17 @@ QString CreateTableDialog::getCreateTableSql() const {
         if (auto row = qobject_cast<QWidget*>(fieldsLayout->itemAt(i)->widget())) {
             QLineEdit *nameEdit = row->findChild<QLineEdit*>();
             QComboBox *typeCombo = row->findChild<QComboBox*>();
-            QCheckBox *pkCheck = row->findChild<QCheckBox*>("");
-            QCheckBox *nnCheck = row->findChild<QCheckBox*>("");
 
             QString name = nameEdit->text().trimmed();
             if (name.isEmpty()) continue;
 
             QString type = typeCombo->currentText();
-            QString column = QString("\"%1\" %2").arg(name, type);
-            if (pkCheck->isChecked()) column += " PRIMARY KEY";
-            if (nnCheck->isChecked()) column += " NOT NULL";
+            QString column = QString("%1 %2").arg(name, type);
 
             columns << column;
         }
     }
 
     if (columns.isEmpty()) return "";
-    return QString("CREATE TABLE %1 (\n    %2\n);").arg(tableName, columns.join(",\n    "));
+    return QString("CREATE TABLE %1 \n    %2\n;").arg(tableName, columns.join(" \n    "));
 }
