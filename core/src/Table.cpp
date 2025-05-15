@@ -436,22 +436,19 @@ void Table::commit() {
 }
 
 void Table::rollback() {
+    delete table_reader;
     std::filesystem::path origin_path(file_name), to_be(file_name);
     to_be.replace_extension(std::filesystem::path(".del"));
     if (exists(to_be)) {
-        if (exists(origin_path)) {
-            delete table_reader;
+        if (exists(origin_path))
             remove(origin_path);
-        }
         rename(to_be, origin_path);
     }
     origin_path.replace_extension(std::filesystem::path(".header"));
     to_be.replace_extension(std::filesystem::path(".hdl"));
     if (exists(to_be)) {
-        if (exists(origin_path)) {
-            delete table_reader;
+        if (exists(origin_path))
             remove(origin_path);
-        }
         rename(to_be, origin_path);
     }
 }
