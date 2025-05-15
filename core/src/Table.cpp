@@ -448,8 +448,10 @@ void Table::rollback() {
     origin_path.replace_extension(std::filesystem::path(".header"));
     to_be.replace_extension(std::filesystem::path(".hdl"));
     if (exists(to_be)) {
-        if (exists(origin_path))
+        if (exists(origin_path)) {
+            delete table_reader;
             remove(origin_path);
+        }
         rename(to_be, origin_path);
     }
 }
