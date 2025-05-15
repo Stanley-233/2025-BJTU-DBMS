@@ -451,6 +451,7 @@ void Table::rollback() {
             remove(origin_path);
         rename(to_be, origin_path);
     }
+    table_reader = nullptr;
 }
 
 std::string select_with_join(
